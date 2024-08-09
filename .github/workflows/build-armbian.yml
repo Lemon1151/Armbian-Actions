@@ -1,0 +1,95 @@
+name: Build and Deploy Armbian  
+  
+on:  
+  workflow_dispatch:  
+    inputs:  
+      BOARD:  
+        description: 'Board type'  
+        required: true  
+        default: 'tpm312'  
+      BRANCH:  
+        description: 'Branch to build'  
+        required: true  
+        default: 'current'  
+      RELEASE:  
+        description: 'Release type'  
+        required: true  
+        default: 'bookworm'  
+      BUILD_MINIMAL:  
+        description: 'Build minimal system'  
+        required: true  
+        default: 'no'  
+      BUILD_DESKTOP:  
+        description: 'Build desktop system'  
+        required: true  
+        default: 'no'  
+      KERNEL_CONFIGURE:  
+        description: 'Configure kernel'  
+        required: true  
+        default: 'no'  
+      COMPRESS_OUTPUTIMAGE:  
+        description: 'Compress output image'  
+        required: true  
+        default: 'sha,xz'  
+      BOOT_LOGO:  
+        description: 'Include boot logo'  
+        required: true  
+        default: 'no'  
+  
+jobs:  
+  build-armbian:  
+    runs-on: ubuntu-latest  
+    steps:  
+      - name: Checkout Armbian source  
+        run: |  
+          sudo mkdir -p /opt/main  
+          sudo git clone --force https://github.com/armbian/build.git /opt/main  
+  
+      - name: Copy files to build directory  
+        run: |  
+          sudo cp -rf $GITHUB_WORKSPACE/* /opt/main/build/  
+  
+      - name: Set parameters in compile.sh  
+        run: |  
+          echo "BOARD=${{ github.event.inputs.BOARD }}" | sudo tee -a /opt/main/build/compile.sh  
+          echo "BRANCH=${{ github.event.inputs.BRANCH }}" | sudo tee -a /opt/main/build/compile.sh  
+          echo "RELEASE=${{ github.event.inputs.RELEASE }}" | sudo tee -a /opt/main/build/compile.sh  
+          echo "BUILD_MINIMAL=${{ github.event.inputs.BUILD_MINIMAL }}" | sudo tee -a /opt/main/build/compile.sh  
+          echo "BUILD_DESKTOP=${{ github.event.inputs.BUILD_DESKTOP }}" | sudo tee -a /opt/main/build/compile.sh  
+          echo "KERNEL_CONFIGURE=${{ github.event.inputs.KERNEL_CONFIGURE }}" | sudo tee -a /opt/main/build/compile.sh  
+          echo "COMPRESS_OUTPUTIMAGE=${{ github.event.inputs.COMPRESS_OUTPUTIMAGE }}" | sudo tee -a /opt/main/build/compile.sh  
+          echo "BOOT_LOGO=${{ github.event.inputs.BOOT_LOGO }}" | sudo tee -a /opt/main/build/compile.sh  
+  
+      - name: Execute compile.sh  
+        run: |  
+          sudo chmod +x /opt/main/build/compile.sh  
+          sudo /opt/main/build/compile.sh  
+  
+      - name: Upload artifacts  
+        if: always()  
+        uses: actions/upload-artifact@v3  
+        with:  
+          name: Armbian-Build  
+          path: /opt/main/build/output/*  
+  
+      - name: Create Release  
+        if: success()  
+        id: create_release  
+        uses: actions/create-release@v1  
+        env:  
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
+        with:  
+          tag_name: ${{ github.event.inputs.RELEASE }}-${{ github.event.inputs.BOARD }}  
+          release_name: Armbian ${{ github.event.inputs.RELEASE }} for ${{ github.event.inputs.BOARD }}  
+          draft: false  
+          prerelease: false  
+  
+      - name: Upload Release Asset  
+        if: success()  
+        uses: actions/upload-release-asset@v1  
+        env:  
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
+        with:  
+          upload_url: ${{ steps.create_release.outputs.upload_url }}  
+          asset_path: /opt/main/build/output/Armbian_*.img.xz  
+          asset_name: Armbian_${{ github.event.inputs.RELEASE }}_${{ github.event.inputs.BOARD }
