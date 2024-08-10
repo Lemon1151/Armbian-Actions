@@ -2,21 +2,20 @@ diff --git a/arch/arm64/boot/dts/rockchip/rk3399-tb-ls3399.dts b/arch/arm64/boot
 new file mode 100644
 --- /dev/null
 +++ b/arch/arm64/boot/dts/rockchip/rk3399-tb-ls3399.dts
-@@ -0,0 +1,422 @@
+@@ -0,0 +1,681 @@
 +/dts-v1/;
-+#include <dt-bindings/input/linux-event-codes.h>
-+#include <dt-bindings/pwm/pwm.h>
 +#include <dt-bindings/input/input.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/pwm/pwm.h>
 +#include "rk3399.dtsi"
 +#include "rk3399-opp.dtsi"
 +
 +/ {
-+	model = "Rockchip TB-LS3399";
-+	compatible = "rockchip,tb-ls3399", "rockchip,rk3399";
++	model = "RK3399 TB-LS3399";
++	compatible = "rockchip,rk3399-tb-ls3399", "rockchip,rk3399";
 +
 +	chosen: chosen {
 +		stdout-path = &uart2;
++		u-boot,spl-boot-order = &sdmmc, &sdhci;
 +	};
 +
 +	aliases: aliases {
@@ -34,11 +33,20 @@ new file mode 100644
 +	vcc5v0_sys: vcc5v0-sys {
 +		compatible = "regulator-fixed";
 +		regulator-name = "vcc5v0_sys";
-+		gpio = <&gpio4 RK_PD1 GPIO_ACTIVE_HIGH>;
 +		regulator-min-microvolt = <5000000>;
 +		regulator-max-microvolt = <5000000>;
 +		regulator-always-on;
 +		regulator-boot-on;
++	};
++
++	vcc5v0_host: vcc5v0-host {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc5v0_host";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		gpio = <&gpio4 RK_PD1 GPIO_ACTIVE_HIGH>;
++		regulator-always-on;
++		enable-active-high;
 +	};
 +
 +	vcc_sys: vcc-sys {
@@ -78,6 +86,42 @@ new file mode 100644
 +		regulator-boot-on;
 +	};
 +
++	usb_power: usb-power {
++		compatible = "regulator-fixed";
++		regulator-name = "usb_power";
++		gpio = <&gpio1 RK_PA0 GPIO_ACTIVE_HIGH>;
++	};
++
++    rt5651_sound: rt5651-sound {
++		compatible = "simple-audio-card";
++		simple-audio-card,name = "realtek,rt5651-codec";
++		simple-audio-card,format = "i2s";
++		simple-audio-card,mclk-fs = <256>;
++		hp-det-gpio = <&gpio4 RK_PD4 GPIO_ACTIVE_HIGH>;
++		simple-audio-card,widgets =
++			"Microphone", "Mic Jack",
++			"Headphone", "Headphone Jack";
++		simple-audio-card,routing =
++			"Mic Jack", "micbias1",
++			"IN1P", "Mic Jack",
++			"Headphone Jack", "HPOL",
++			"Headphone Jack", "HPOR";
++		simple-audio-card,cpu {
++			sound-dai = <&i2s1>;
++		};
++		simple-audio-card,codec {
++			sound-dai = <&rt5651>;
++		};
++	};
++	
++	wireless_wlan: wireless-wlan {
++		compatible = "wlan-platdata";
++		rockchip,grf = <&grf>;
++		wifi_chip_type = "ap6212";
++		WIFI,host_wake_irq = <&gpio0 RK_PA3 GPIO_ACTIVE_HIGH>;
++		status = "okay";
++	};
++
 +	sdio_pwrseq: sdio-pwrseq {
 +		compatible = "mmc-pwrseq-simple";
 +		clocks = <&rk808 1>;
@@ -85,8 +129,19 @@ new file mode 100644
 +		reset-gpios = <&gpio0 RK_PB2 GPIO_ACTIVE_LOW>;
 +	};
 +
++	vcc_lcd: vcc-lcd {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc_lcd";
++		startup-delay-us = <20000>;
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-always-on;
++		enable-active-high;
++		regulator-boot-on;
++		vin-supply = <&vcc5v0_sys>;
++	};
++
 +	adc_keys: adc-keys {
-+		u-boot,dm-pre-reloc;
 +		compatible = "adc-keys";
 +		io-channels = <&saradc 1>;
 +		io-channel-names = "buttons";
@@ -94,12 +149,51 @@ new file mode 100644
 +		status = "okay";
 +
 +		volumeup-key {
-+			u-boot,dm-pre-reloc;
 +			linux,code = <KEY_VOLUMEUP>;
 +			label = "volume up";
 +			press-threshold-microvolt = <0>;
 +		};
 +	};
++};
++
++&cpu_l0 {
++	cpu-supply = <&vdd_cpu_l>;
++};
++
++&cpu_l1 {
++	cpu-supply = <&vdd_cpu_l>;
++};
++
++&cpu_l2 {
++	cpu-supply = <&vdd_cpu_l>;
++};
++
++&cpu_l3 {
++	cpu-supply = <&vdd_cpu_l>;
++};
++
++&cpu_b0 {
++	cpu-supply = <&vdd_cpu_b>;
++};
++
++&cpu_b1 {
++	cpu-supply = <&vdd_cpu_b>;
++};
++
++&gpu {
++	mali-supply = <&vdd_gpu>;
++	status = "okay";
++};
++
++&hdmi {
++	pinctrl-names = "default";
++	pinctrl-0 = <&hdmi_cec>;
++	ddc-i2c-bus = <&i2c3>;
++	status = "okay";
++};
++
++&hdmi_sound {
++	status = "okay";
 +};
 +
 +&gmac {
@@ -119,7 +213,6 @@ new file mode 100644
 +};
 +
 +&i2c0 {
-+
 +	i2c-scl-rising-time-ns = <180>;
 +	i2c-scl-falling-time-ns = <30>;
 +	clock-frequency = <400000>;
@@ -172,7 +265,7 @@ new file mode 100644
 +		rockchip,system-power-controller;
 +		wakeup-source;
 +		#clock-cells = <1>;
-+		clock-output-names = "rk808-clkout1\0rk808-clkout2";
++		clock-output-names = "rk808-clkout1", "rk808-clkout2";
 +		vcc1-supply = <&vcc_sys>;
 +		vcc2-supply = <&vcc_sys>;
 +		vcc3-supply = <&vcc_sys>;
@@ -185,7 +278,6 @@ new file mode 100644
 +		vcc11-supply = <&vcc_sys>;
 +		vcc12-supply = <&vcc3v3_sys>;
 +		vddio-supply = <&vcc_3v0>;
-+		status = "okay";
 +
 +		regulators {
 +
@@ -288,12 +380,12 @@ new file mode 100644
 +				};
 +			};
 +
-+			vcc2v8_dvp: LDO_REG5 {
++			vcca3v0_codec: LDO_REG5 {
 +				regulator-always-on;
 +				regulator-boot-on;
 +				regulator-min-microvolt = <3000000>;
 +				regulator-max-microvolt = <3000000>;
-+				regulator-name = "vcc2v8_dvp";
++				regulator-name = "vcca3v0_codec";
 +
 +				regulator-state-mem {
 +					regulator-off-in-suspend;
@@ -361,6 +453,47 @@ new file mode 100644
 +	};
 +};
 +
++&i2c1 {
++	i2c-scl-rising-time-ns = <140>;
++	i2c-scl-falling-time-ns = <30>;
++	clock-frequency = <400000>;
++	status = "okay";
++
++	rt5651: rt5651@1a {
++		reg = <0x1a>;
++		#sound-dai-cells = <0>;
++		compatible = "realtek,rt5651";
++		clocks = <&cru SCLK_I2S_8CH_OUT>;
++		clock-names = "mclk";
++	};
++};
++
++&i2c2 {
++	status = "okay";
++
++	// rtc@51 {
++	// 	compatible = "nxp,pcf8563";
++	// 	irq-gpios = <&gpio1 RK_PA2 GPIO_ACTIVE_LOW>;
++	// 	reg = <0x51>;
++	// };
++};
++
++// &i2c3 {
++// 	status = "okay";
++// };
++
++&i2s0 {
++	status = "okay";
++};
++
++&i2s1 {
++	status = "okay";
++};
++
++&i2s2 {
++	status = "okay";
++};
++
 +&sdio0 {
 +	num-slots = <1>;
 +	bus-width = <4>;
@@ -377,12 +510,14 @@ new file mode 100644
 +};
 +
 +&sdmmc {
-+	num-slots = <1>;
-+	bus-width = <4>;
++	clock-frequency = <50000000>;
++	clock-freq-min-max = <400000 150000000>;
 +	supports-sd;
++	bus-width = <4>;
 +	cap-mmc-highspeed;
 +	cap-sd-highspeed;
 +	disable-wp;
++	num-slots = <1>;
 +	pinctrl-names = "default";
 +	pinctrl-0 = <&sdmmc_clk &sdmmc_cmd &sdmmc_cd &sdmmc_bus4>;
 +	vqmmc-supply = <&vcc_sd>;
@@ -402,6 +537,19 @@ new file mode 100644
 +	status = "okay";
 +};
 +
++&io_domains {
++	bt656-supply = <&vcc1v8_dvp>;
++	audio-supply = <&vcca1v8_codec>;
++	sdmmc-supply = <&vcc_sd>;
++	gpio1830-supply = <&vcc_3v0>;
++	status = "okay";
++};
++
++&pmu_io_domains {
++	pmu1830-supply = <&vcc_3v0>;
++	status = "okay";
++};
++
 +&saradc {
 +	vref-supply = <&vcc_1v8>;
 +	status = "okay";
@@ -414,14 +562,125 @@ new file mode 100644
 +	status = "okay";
 +};
 +
++&pwm1 {
++	status = "okay";
++};
++
 +&pwm2 {
 +	status = "okay";
 +};
 +
-+&crypto {
-+        status = "okay";
++&uart0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart0_xfer>, <&uart0_cts>, <&uart0_rts>;
++	uart-has-rtscts;
++	status = "okay";
++
++	bluetooth {
++		compatible = "brcm,bcm43438-bt";
++		clocks = <&rk808 1>;
++		clock-names = "lpo";
++
++		device-wakeup-gpios = <&gpio2 RK_PD2 GPIO_ACTIVE_HIGH>;
++		host-wakeup-gpios = <&gpio0 RK_PA4 GPIO_ACTIVE_HIGH>;
++		shutdown-gpios = <&gpio0 RK_PB1 GPIO_ACTIVE_HIGH>;
++		status = "okay";
++	};
 +};
 +
 +&uart2 {
-+        status = "okay";
++	status = "okay";
++};
++
++&tcphy0 {
++	status = "okay";
++};
++
++&tcphy1 {
++	status = "okay";
++};
++
++&u2phy0 {
++	status = "okay";
++
++	u2phy0_otg: otg-port {
++		status = "okay";
++	};
++
++	u2phy0_host: host-port {
++		phy-supply = <&vcc5v0_host>;
++		status = "okay";
++	};
++};
++
++&u2phy1 {
++	status = "okay";
++
++	u2phy1_otg: otg-port {
++		status = "okay";
++	};
++
++	u2phy1_host: host-port {
++		phy-supply = <&vcc5v0_host>;
++		status = "okay";
++	};
++};
++
++&usbdrd3_0 {
++	extcon = <&u2phy0>;
++	status = "okay";
++};
++
++&usbdrd_dwc3_0 {
++	dr_mode = "host";
++	status = "okay";
++};
++
++&usbdrd3_1 {
++	status = "okay";
++};
++
++&usbdrd_dwc3_1 {
++	dr_mode = "host";
++	status = "okay";
++};
++
++&usb_host0_ehci {
++	status = "okay";
++};
++
++&usb_host0_ohci {
++	status = "okay";
++};
++
++&usb_host1_ehci {
++	status = "okay";
++};
++
++&usb_host1_ohci {
++	status = "okay";
++};
++
++&vdec_mmu {
++	status = "okay";
++};
++
++&vpu_mmu {
++	status = "okay";
++};
++
++&vopb {
++	status = "okay";
++};
++
++&vopb_mmu {
++	status = "okay";
++};
++
++&vopl {
++	status = "okay";
++};
++
++&vopl_mmu {
++	status = "okay";
 +};
