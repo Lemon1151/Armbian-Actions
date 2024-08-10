@@ -19,9 +19,15 @@ on:
           - current
           - edge
       RELEASE:  
-        description: 'Release name'  
+        description: 'Release name' 
+        default: 'bookworm'
         required: true  
-        type: string  
+        type: choice
+        options:
+          - jammy
+          - noble
+          - bullseye
+          - bookworm
       BUILD_MINIMAL:  
         description: 'Build minimal system'  
         default: 'no'  
@@ -42,7 +48,9 @@ on:
         description: 'Configure kernel'  
         default: 'no'  
         required: false  
-        type: choice  
+        type: choice 
+        options:
+          - no
       COMPRESS_OUTPUTIMAGE:  
         description: 'Compress output image'  
         default: 'sha,xz'  
