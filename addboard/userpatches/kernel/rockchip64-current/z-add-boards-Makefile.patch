@@ -1,24 +1,9 @@
+diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
 --- a/arch/arm64/boot/dts/rockchip/Makefile
 +++ b/arch/arm64/boot/dts/rockchip/Makefile
-@@ -36,6 +36,7 @@
- 	rk3368-evb-act8846.dtb \
- 	rk3368-geekbox.dtb \
- 	rk3368-lion-haikou.dtb \
-+	rk3399-ls3399.dtb \
- 	rk3368-orion-r68-meta.dtb \
- 	rk3368-px5-evb.dtb \
- 	rk3368-r88.dtb \
-@@ -83,10 +84,13 @@
- 	rk3399-rock960.dtb \
- 	rk3399-rockpro64.dtb \
- 	rk3399-rockpro64-v2.dtb \
-+	rk3399-r08.dtb \
- 	rk3399-sapphire.dtb \
- 	rk3399-sapphire-excavator.dtb \
- 	rk3399-tinker-2.dtb \
-+	rk3399-tpm312.dtb \
- 	rk3399-xiaobao-nas.dtb \
-+	rk3399-zysj.dtb \
- 	rk3399pro-rock-pi-n10.dtb \
- 	rk3399pro-tinker-edge-r.dtb \
- 	rk3566-anbernic-rg353p.dtb \
+@@ -1 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-r08.dtb
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-tpm312.dtb
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-tb-ls3399.dtb
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-zysj.dtb
