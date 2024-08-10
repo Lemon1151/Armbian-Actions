@@ -86,15 +86,14 @@ jobs:
           df -hT ${PWD}
           git clone -q --single-branch --depth=1 --branch=main https://github.com/armbian/build.git build 
           ln -sf /mnt/workdir/build ${GITHUB_WORKSPACE}/build
+          
+          # 检查并合并 config 和 userpatches 文件夹    
+          cp -rf ${GITHUB_WORKSPACE}/addboard/* /mnt/workdir/build
   
       - name: Compile Armbian [ ${{ inputs.RELEASE }} ] 
         working-directory: /mnt/workdir
         run: |  
           cd build/ 
-          # 检查并合并 config 和 userpatches 文件夹  
-          if [ -d "${GITHUB_WORKSPACE}/addboard" ]; then  
-          cp -rf "${GITHUB_WORKSPACE}/addboard/*" .
-          fi
           ./compile.sh BOARD=${{ inputs.BOARD }} RELEASE=${{ inputs.RELEASE }} BRANCH=${{ inputs.BRANCH }} BUILD_MINIMAL=${{ inputs.BUILD_MINIMAL }} \
                            BUILD_DESKTOP=${{ inputs.BUILD_DESKTOP }} KERNEL_CONFIGURE=${{ inputs.KERNEL_CONFIGURE }} COMPRESS_OUTPUTIMAGE=${{ inputs.COMPRESS_OUTPUTIMAGE }} BOOT_LOGO=${{ inputs.BOOT_LOGO }}
           
