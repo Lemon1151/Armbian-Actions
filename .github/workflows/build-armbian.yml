@@ -85,10 +85,11 @@ jobs:
         run: |
           df -hT ${PWD}
           git clone -q --single-branch --depth=1 --branch=main https://github.com/armbian/build.git build 
+          git clone -q --single-branch --depth=1 --branch=main https://github.com/Lemon1151/Armbian-Actions.git Armbian-Actions
           ln -sf /mnt/workdir/build ${GITHUB_WORKSPACE}/build
           
           # 检查并合并 config 和 userpatches 文件夹    
-          cp -rf ${GITHUB_WORKSPACE}/addboard/* /mnt/workdir/build
+          cp -rf "/mnt/workdir/Armbian-Actions/addboard/*" "/mnt/workdir/build"
   
       - name: Compile Armbian [ ${{ inputs.RELEASE }} ] 
         working-directory: /mnt/workdir
