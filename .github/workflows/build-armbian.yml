@@ -106,10 +106,13 @@ jobs:
         if: success() 
         uses: ncipollo/release-action@main
         with:  
-          artifacts: "${{ github.workspace }}/build/output/images/*"  
-          token: ${{ secrets.MY_TOKEN }}  
           tag: "Armbian_${{ github.event.inputs.RELEASE }}_${{ env.CURRENT_YEAR_MONTH }}"  
           name: "Armbian_${{ github.event.inputs.RELEASE }}_(${{ env.CURRENT_YEAR_MONTH }})"  
+          artifacts: "${{ github.workspace }}/build/output/images/*"  
+          allowUpdates: true 
+          removeArtifacts: false 
+          replacesArtifacts: true 
+          token: ${{ secrets.MY_TOKEN }}  
           body: |  
             ### Armbian Image Information  
             - RELEASE: ${{ github.event.inputs.RELEASE }}    
