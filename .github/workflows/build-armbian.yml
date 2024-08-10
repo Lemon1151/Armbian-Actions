@@ -72,17 +72,16 @@ jobs:
       - name: Checkout  
         uses: actions/checkout@v3    
         with:  
-          path: ${GITHUB_WORKSPACE}/Armbian-Actions
+          path: ${{ github.workspace }}/addboard
         
       - name: Download source code
         run: |
           df -hT ${PWD}
           git clone -q --single-branch --depth=1 --branch=main https://github.com/armbian/build.git build 
-          git clone -q --single-branch --depth=1 --branch=main https://github.com/Lemon1151/Armbian-Actions.git Armbian-Actions
-          ln -sf ${GITHUB_WORKSPACE}/build ${GITHUB_WORKSPACE}/build
+          ln -sf ${{ github.workspace }}/build ${{ github.workspace }}/build
           
           # 检查并合并 config 和 userpatches 文件夹    
-          cp -rf "${GITHUB_WORKSPACE}/addboard/*" "${GITHUB_WORKSPACE}/build"
+          cp -rf ${{ github.workspace }}/addboard/* ${{ github.workspace }}/build
   
       - name: Compile Armbian [ ${{ inputs.RELEASE }} ] 
         run: |  
