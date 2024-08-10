@@ -74,8 +74,7 @@ jobs:
 
       - name: create a working directory
         run: |
-          echo "------------------------------- 设置工作目录及时区 -------------------------------"
-          sudo timedatectl set-timezone "$TZ"
+          echo "------------------------------- 设置工作目录 -------------------------------"
           sudo mkdir -p /mnt/workdir
           sudo chown $USER:$GROUPS /mnt/workdir
         
