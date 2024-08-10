@@ -84,22 +84,11 @@ jobs:
           cp -rf "${{ github.workspace }}/addboard"/* "/home/runner/work/main/build/"  
           fi  
   
-      - name: Add Build Parameters to compile.sh  
+      - name: Compile Armbian [ ${{ inputs.RELEASE }} ]  
         run: |  
-          echo "BOARD=${{ github.event.inputs.BOARD }}" >> /home/runner/work/main/build/compile.sh  
-          echo "BRANCH=${{ github.event.inputs.BRANCH }}" >> /home/runner/work/main/build/compile.sh  
-          echo "RELEASE=${{ github.event.inputs.RELEASE }}" >> /home/runner/work/main/build/compile.sh  
-          echo "BUILD_MINIMAL=${{ github.event.inputs.BUILD_MINIMAL }}" >> /home/runner/work/main/build/compile.sh  
-          echo "BUILD_DESKTOP=${{ github.event.inputs.BUILD_DESKTOP }}" >> /home/runner/work/main/build/compile.sh  
-          echo "KERNEL_CONFIGURE=${{ github.event.inputs.KERNEL_CONFIGURE }}" >> /home/runner/work/main/build/compile.sh  
-          echo "COMPRESS_OUTPUTIMAGE=${{ github.event.inputs.COMPRESS_OUTPUTIMAGE }}" >> /home/runner/work/main/build/compile.sh  
-          echo "BOOT_LOGO=${{ github.event.inputs.BOOT_LOGO }}" >> /home/runner/work/main/build/compile.sh  
-  
-      - name: Execute compile.sh  
-        run: |  
-          cd /home/runner/work/main/build  
-          chmod +x compile.sh  
-          ./compile.sh  
+          cd /home/runner/work/main/build   
+          ./compile.sh BOARD=${{ inputs.BOARD }} RELEASE=${{ inputs.RELEASE }} BRANCH=${{ inputs.BRANCH }} BUILD_MINIMAL=${{ inputs.BUILD_MINIMAL }} \
+                           BUILD_DESKTOP=${{ inputs.BUILD_DESKTOP }} KERNEL_CONFIGURE=${{ inputs.KERNEL_CONFIGURE }} COMPRESS_OUTPUTIMAGE=${{ inputs.COMPRESS_OUTPUTIMAGE }} BOOT_LOGO=${{ inputs.BOOT_LOGO }}
           
       - name: Set current year and month  
         run: |  
