@@ -106,7 +106,7 @@ jobs:
         if: success() 
         uses: ncipollo/release-action@main
         with:  
-          artifacts: "/home/runner/work/main/build/output/images/*"  
+          artifacts: "${{ github.workspace }}/build/output/images/*"  
           token: ${{ secrets.MY_TOKEN }}  
           tag: "Armbian_${{ github.event.inputs.RELEASE }}_${{ env.CURRENT_YEAR_MONTH }}"  
           name: "Armbian_${{ github.event.inputs.RELEASE }}_(${{ env.CURRENT_YEAR_MONTH }})"  
