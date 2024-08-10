@@ -2,7 +2,7 @@ diff --git a/arch/arm/dts/rk3399-tb-ls3399.dts b/arch/arm/dts/rk3399-tb-ls3399.d
 new file mode 100644
 --- /dev/null
 +++ b/arch/arm/dts/rk3399-tb-ls3399.dts
-@@ -0,0 +1,420 @@
+@@ -0,0 +1,416 @@
 +/dts-v1/;
 +#include "rk3399.dtsi"
 +#include "rk3399-u-boot.dtsi"
@@ -414,10 +414,6 @@ new file mode 100644
 +
 +&pwm2 {
 +	status = "okay";
-+};
-+
-+&crypto {
-+        status = "okay";
 +};
 +
 +&uart2 {
