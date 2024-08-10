@@ -74,11 +74,19 @@ jobs:
         with:  
           path: ${{ github.workspace }}/build  
   
-      - name: Clone Armbian Source  
+      - name: Clone Armbian Source and Merge Configs  
         run: |  
-          mkdir -p /home/runner/work/main  
-          git clone -q --single-branch --depth=1 --branch=main https://github.com/armbian/build.git /home/runner/work/main && \    
-          cp -f ${{ github.workspace }}/armbian/* /home/runner/work/main/build/
+          # 克隆 Armbian/build 仓库到 /home/runner/work/main/build（或您选择的任何路径）  
+          git clone -q --single-branch --depth=1 --branch=main https://github.com/armbian/build.git /home/runner/work/main/build  
+   
+          # 检查并合并 config 和 userpatches 文件夹  
+          if [ -d "${{ github.workspace }}/config" ]; then  
+          cp -rf "${{ github.workspace }}/config"/* "/home/runner/work/main/build/"  
+          fi  
+  
+          if [ -d "${{ github.workspace }}/userpatches" ]; then  
+          cp -rf "${{ github.workspace }}/userpatches"/* "/home/runner/work/main/build/"  
+          fi
   
       - name: Add Build Parameters to compile.sh  
         run: |  
