@@ -80,13 +80,9 @@ jobs:
           git clone -q --single-branch --depth=1 --branch=main https://github.com/armbian/build.git /home/runner/work/main/build  
    
           # 检查并合并 config 和 userpatches 文件夹  
-          if [ -d "${{ github.workspace }}/config" ]; then  
-          cp -rf "${{ github.workspace }}/config"/* "/home/runner/work/main/build/"  
+          if [ -d "${{ github.workspace }}/addboard" ]; then  
+          cp -rf "${{ github.workspace }}/addboard"/* "/home/runner/work/main/build/"  
           fi  
-  
-          if [ -d "${{ github.workspace }}/userpatches" ]; then  
-          cp -rf "${{ github.workspace }}/userpatches"/* "/home/runner/work/main/build/"  
-          fi
   
       - name: Add Build Parameters to compile.sh  
         run: |  
