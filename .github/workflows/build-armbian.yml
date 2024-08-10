@@ -72,7 +72,6 @@ jobs:
       - name: Checkout  
         uses: actions/checkout@v3    
         with:  
-          path: ${{ github.workspace }}/addboard
         
       - name: Download source code
         run: |
