@@ -79,6 +79,7 @@ jobs:
           sudo chown $USER:$GROUPS /mnt/workdir
         
       - name: Download source code
+        working-directory: /mnt/workdir
         run: |
           df -hT ${PWD}
           git clone -q --single-branch --depth=1 --branch=main https://github.com/armbian/build.git build
