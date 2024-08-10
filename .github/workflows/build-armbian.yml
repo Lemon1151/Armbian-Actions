@@ -9,7 +9,10 @@ on:
         default: 'tpm312'
         type: choice
         options:
+          - r08
           - tpm312
+          - tb-ls3399
+          - zysj
       BRANCH:  
         description: 'Armbian branch'  
         default: 'current'  
@@ -78,7 +81,7 @@ jobs:
           git clone -q --single-branch --depth=1 --branch=main https://github.com/armbian/build.git build 
           ln -sf ${{ github.workspace }}/build ${{ github.workspace }}/build
           
-          # 检查并合并 config 和 userpatches 文件夹    
+          # 复制 config 和 userpatches 目录文件    
           cp -rf ${{ github.workspace }}/addboard/config/boards/tpm312.conf ${{ github.workspace }}/build/config/boards
           mkdir -p "${{ github.workspace }}/build/userpatches"
           cp -rf ${{ github.workspace }}/addboard/userpatches/* ${{ github.workspace }}/build/userpatches
