@@ -5,13 +5,19 @@ on:
     inputs:  
       BOARD:  
         description: 'Board type'  
-        required: true  
-        type: string  
+        required: true 
+        default: 'tpm312'
+        type: choice
+        options:
+          - tpm312
       BRANCH:  
         description: 'Armbian branch'  
         default: 'current'  
-        required: false  
-        type: string  
+        required: false 
+        type: choice 
+        options:
+          - current
+          - edge
       RELEASE:  
         description: 'Release name'  
         required: true  
@@ -20,17 +26,23 @@ on:
         description: 'Build minimal system'  
         default: 'no'  
         required: false  
-        type: string  
+        type: choice
+        options:
+          - no
+          - yes
       BUILD_DESKTOP:  
         description: 'Build desktop environment'  
         default: 'no'  
         required: false  
-        type: string  
+        type: choice
+        options:
+          - no
+          - yes
       KERNEL_CONFIGURE:  
         description: 'Configure kernel'  
         default: 'no'  
         required: false  
-        type: string  
+        type: choice  
       COMPRESS_OUTPUTIMAGE:  
         description: 'Compress output image'  
         default: 'sha,xz'  
@@ -40,7 +52,10 @@ on:
         description: 'Include boot logo'  
         default: 'no'  
         required: false  
-        type: string  
+        type: choice 
+        options:
+          - no
+          - yes
   
 jobs:  
   build-armbian:  
@@ -79,7 +94,7 @@ jobs:
         uses: ncipollo/release-action@main  
         with:  
           artifacts: "/home/runner/work/main/build/output/images/*"  
-          token: ${{ secrets.GITHUB_TOKEN }}  
+          token: ${{ secrets.MY_TOKEN }}  
           tag: "Armbian_${{ github.event.inputs.RELEASE }}_${{ (now.strftime('%Y%m')) }}"  
           name: "Armbian ${{ github.event.inputs.RELEASE }} Build (${{ now.strftime('%Y-%m-%d') }})"  
           body: "Automated build of Armbian for ${{ github.event.inputs.BOARD }} using ${{ github.event.inputs.RELEASE }}."  
