@@ -90,8 +90,8 @@ jobs:
         run: |  
           cd build/ 
           # 检查并合并 config 和 userpatches 文件夹  
-          if [ -d "${{ github.workspace }}/addboard" ]; then  
-          cp -rf "${{ github.workspace }}/addboard/*" .
+          if [ -d "${GITHUB_WORKSPACE}/addboard" ]; then  
+          cp -rf "${GITHUB_WORKSPACE}/addboard/*" .
           fi
           ./compile.sh BOARD=${{ inputs.BOARD }} RELEASE=${{ inputs.RELEASE }} BRANCH=${{ inputs.BRANCH }} BUILD_MINIMAL=${{ inputs.BUILD_MINIMAL }} \
                            BUILD_DESKTOP=${{ inputs.BUILD_DESKTOP }} KERNEL_CONFIGURE=${{ inputs.KERNEL_CONFIGURE }} COMPRESS_OUTPUTIMAGE=${{ inputs.COMPRESS_OUTPUTIMAGE }} BOOT_LOGO=${{ inputs.BOOT_LOGO }}
