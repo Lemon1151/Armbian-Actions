@@ -82,7 +82,7 @@ jobs:
           ln -sf ${GITHUB_WORKSPACE}/build ${GITHUB_WORKSPACE}/build
           
           # 检查并合并 config 和 userpatches 文件夹    
-          cp -rf "${GITHUB_WORKSPACE}/Armbian-Actions/addboard/*" "${GITHUB_WORKSPACE}/build"
+          cp -rf "${GITHUB_WORKSPACE}/addboard/*" "${GITHUB_WORKSPACE}/build"
   
       - name: Compile Armbian [ ${{ inputs.RELEASE }} ] 
         run: |  
