@@ -81,7 +81,7 @@ jobs:
    
           # 检查并合并 config 和 userpatches 文件夹  
           if [ -d "${{ github.workspace }}/addboard" ]; then  
-          cp -rf "${{ github.workspace }}/addboard"/* "/home/runner/work/main/build/"  
+          cp -rf "${{ github.workspace }}/addboard/*" "/home/runner/work/main/build/"  
           fi  
   
       - name: Compile Armbian [ ${{ inputs.RELEASE }} ]  
