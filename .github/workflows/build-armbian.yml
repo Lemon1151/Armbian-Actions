@@ -70,23 +70,29 @@ jobs:
     runs-on: ubuntu-latest  
     steps:  
       - name: Checkout  
-        uses: actions/checkout@v3  
-        with:  
-          path: ${{ github.workspace }}/build  
+        uses: actions/checkout@v3    
+
+      - name: create a working directory
+        run: |
+          echo "------------------------------- 设置工作目录及时区 -------------------------------"
+          sudo timedatectl set-timezone "$TZ"
+          sudo mkdir -p /mnt/workdir
+          sudo chown $USER:$GROUPS /mnt/workdir
+        
+      - name: Download source code
+        run: |
+          df -hT ${PWD}
+          git clone -q --single-branch --depth=1 --branch=main https://github.com/armbian/build.git build
+          ln -sf /mnt/workdir/build ${GITHUB_WORKSPACE}/build  
   
-      - name: Clone Armbian Source and Merge Configs  
+      - name: Compile Armbian [ ${{ inputs.RELEASE }} ] 
+        working-directory: /mnt/workdir
         run: |  
-          # 克隆 Armbian/build 仓库到 /home/runner/work/main/build（或您选择的任何路径）  
-          git clone -q --single-branch --depth=1 --branch=main https://github.com/armbian/build.git /home/runner/work/main/build  
-   
+          cd build/ 
           # 检查并合并 config 和 userpatches 文件夹  
           if [ -d "${{ github.workspace }}/addboard" ]; then  
-          cp -rf "${{ github.workspace }}/addboard/*" "/home/runner/work/main/build/"  
-          fi  
-  
-      - name: Compile Armbian [ ${{ inputs.RELEASE }} ]  
-        run: |  
-          cd /home/runner/work/main/build   
+          cp -rf "${{ github.workspace }}/addboard/*" .
+          fi
           ./compile.sh BOARD=${{ inputs.BOARD }} RELEASE=${{ inputs.RELEASE }} BRANCH=${{ inputs.BRANCH }} BUILD_MINIMAL=${{ inputs.BUILD_MINIMAL }} \
                            BUILD_DESKTOP=${{ inputs.BUILD_DESKTOP }} KERNEL_CONFIGURE=${{ inputs.KERNEL_CONFIGURE }} COMPRESS_OUTPUTIMAGE=${{ inputs.COMPRESS_OUTPUTIMAGE }} BOOT_LOGO=${{ inputs.BOOT_LOGO }}
           
