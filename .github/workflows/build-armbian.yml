@@ -75,10 +75,12 @@ jobs:
           path: ${{ github.workspace }}/build  
   
       - name: Clone Armbian Source  
-        run: |  
+        run: |   
           mkdir -p /home/runner/work/main  
           git clone -q --single-branch --depth=1 --branch=main https://github.com/armbian/build.git /home/runner/work/main   
-          cp -f ${{ github.workspace }}/build/* /home/runner/work/main/build/  
+      - name: CP Board Build  
+        run: |  
+          cp -f ${{ github.workspace }}/build/* /home/runner/work/main/build/
   
       - name: Add Build Parameters to compile.sh  
         run: |  
