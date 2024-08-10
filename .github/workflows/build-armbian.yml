@@ -96,15 +96,19 @@ jobs:
           cd /home/runner/work/main/build  
           chmod +x compile.sh  
           ./compile.sh  
-  
+          
+      - name: Set current year and month  
+        run: |  
+          echo "CURRENT_YEAR_MONTH=$(date +'%Y%m')" >> $GITHUB_ENV  
+            
       - name: Create Release  
         if: success()  
         uses: ncipollo/release-action@main  
         with:  
           artifacts: "/home/runner/work/main/build/output/images/*"  
           token: ${{ secrets.MY_TOKEN }}  
-          tag: "Armbian_${{ github.event.inputs.RELEASE }}_${{ (now.strftime('%Y%m')) }}"  
-          name: "Armbian ${{ github.event.inputs.RELEASE }} Build (${{ now.strftime('%Y-%m-%d') }})"  
+          tag: "Armbian_${{ github.event.inputs.RELEASE }}_${{ env.CURRENT_YEAR_MONTH }}"  
+          name: "Armbian ${{ github.event.inputs.RELEASE }} Build (${{ env.CURRENT_YEAR_MONTH }})"  
           body: "Automated build of Armbian for ${{ github.event.inputs.BOARD }} using ${{ github.event.inputs.RELEASE }}."  
           draft: false  
           prerelease: false  
