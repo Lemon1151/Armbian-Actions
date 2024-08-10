@@ -92,15 +92,29 @@ jobs:
       - name: Set current year and month  
         run: |  
           echo "CURRENT_YEAR_MONTH=$(date +'%Y%m')" >> $GITHUB_ENV  
-            
+
+      - name: Prepare Release Metadata
+        run: |  
+          # 提取版本号
+          latest_image=$(ls /home/runner/work/main/build/output/images/Armbian-unofficial_*.img | grep -oE 'Armbian-unofficial_[0-9.]+_.*' | sort -V | tail -n 1)    
+          version=$(echo "$latest_image" | cut -d'_' -f2)  
+  
+          # 将版本号设置为环境变量  
+          echo "VERSION=$version" >> $GITHUB_ENV
+        
       - name: Upload image to Release  
-        if: success()  
-        uses: ncipollo/release-action@main  
+        if: success() 
+        uses: ncipollo/release-action@main
         with:  
           artifacts: "/home/runner/work/main/build/output/images/*"  
           token: ${{ secrets.MY_TOKEN }}  
           tag: "Armbian_${{ github.event.inputs.RELEASE }}_${{ env.CURRENT_YEAR_MONTH }}"  
           name: "Armbian_${{ github.event.inputs.RELEASE }}_(${{ env.CURRENT_YEAR_MONTH }})"  
-          body: "Automated build of Armbian for ${{ github.event.inputs.BOARD }} using ${{ github.event.inputs.RELEASE }}."  
+          body: |  
+            ### Armbian Image Information  
+            - RELEASE: ${{ github.event.inputs.RELEASE }}    
+            - Version: ${{ env.VERSION }}  
+            ### Armbian Image Verification  
+            - sha256sum   
           draft: false  
           prerelease: false  
