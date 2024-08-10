@@ -76,7 +76,7 @@ jobs:
         run: |
           echo "------------------------------- 设置工作目录 -------------------------------"
           sudo mkdir -p /mnt/workdir
-          sudo chown $USER:$GROUPS /mnt/workdir
+          sudo chown -R runner.runner /mnt/workdir
         
       - name: Download source code
         working-directory: /mnt/workdir
