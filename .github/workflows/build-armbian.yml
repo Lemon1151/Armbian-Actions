@@ -77,17 +77,18 @@ jobs:
       - name: create a working directory
         run: |
           echo "------------------------------- 设置工作目录 -------------------------------"
-          sudo mkdir -p ${GITHUB_WORKSPACE}/main
-          sudo chown -R runner.runner ${GITHUB_WORKSPACE}/main
+          sudo mkdir -p /mnt/workdir
+          sudo chown -R runner.runner /mnt/workdir
         
       - name: Download source code
-        working-directory: ${GITHUB_WORKSPACE}/main
+        working-directory: /mnt/workdir
         run: |
           df -hT ${PWD}
-          git clone -q --single-branch --depth=1 --branch=main https://github.com/armbian/build.git build  
+          git clone -q --single-branch --depth=1 --branch=main https://github.com/armbian/build.git build 
+          ln -sf /mnt/workdir/build ${GITHUB_WORKSPACE}/build
   
       - name: Compile Armbian [ ${{ inputs.RELEASE }} ] 
-        working-directory: ${GITHUB_WORKSPACE}/main
+        working-directory: /mnt/workdir
         run: |  
           cd build/ 
           # 检查并合并 config 和 userpatches 文件夹  
