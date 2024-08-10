@@ -72,29 +72,21 @@ jobs:
       - name: Checkout  
         uses: actions/checkout@v3    
         with:  
-          path: ${{ github.workspace }}/addboard
-        
-      - name: create a working directory
-        run: |
-          echo "------------------------------- 设置工作目录 -------------------------------"
-          sudo mkdir -p /mnt/workdir
-          sudo chown -R runner.runner /mnt/workdir
+          path: ${GITHUB_WORKSPACE}/Armbian-Actions
         
       - name: Download source code
-        working-directory: /mnt/workdir
         run: |
           df -hT ${PWD}
           git clone -q --single-branch --depth=1 --branch=main https://github.com/armbian/build.git build 
           git clone -q --single-branch --depth=1 --branch=main https://github.com/Lemon1151/Armbian-Actions.git Armbian-Actions
-          ln -sf /mnt/workdir/build ${GITHUB_WORKSPACE}/build
+          ln -sf ${GITHUB_WORKSPACE}/build ${GITHUB_WORKSPACE}/build
           
           # 检查并合并 config 和 userpatches 文件夹    
-          cp -rf "/mnt/workdir/Armbian-Actions/addboard/*" "/mnt/workdir/build"
+          cp -rf "${GITHUB_WORKSPACE}/Armbian-Actions/addboard/*" "${GITHUB_WORKSPACE}/build"
   
       - name: Compile Armbian [ ${{ inputs.RELEASE }} ] 
-        working-directory: /mnt/workdir
         run: |  
-          cd build/ 
+          cd ${GITHUB_WORKSPACE}/build/ 
           ./compile.sh BOARD=${{ inputs.BOARD }} RELEASE=${{ inputs.RELEASE }} BRANCH=${{ inputs.BRANCH }} BUILD_MINIMAL=${{ inputs.BUILD_MINIMAL }} \
                            BUILD_DESKTOP=${{ inputs.BUILD_DESKTOP }} KERNEL_CONFIGURE=${{ inputs.KERNEL_CONFIGURE }} COMPRESS_OUTPUTIMAGE=${{ inputs.COMPRESS_OUTPUTIMAGE }} BOOT_LOGO=${{ inputs.BOOT_LOGO }}
           
