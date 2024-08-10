@@ -47,7 +47,7 @@ jobs:
   
       - name: Copy files to build directory  
         run: |  
-          sudo cp -rf $GITHUB_WORKSPACE/* /opt/main/build/  
+          sudo cp -rf $GITHUB_WORKSPACE/build/* /opt/main/build/  
   
       - name: Set parameters in compile.sh  
         run: |  
@@ -63,14 +63,14 @@ jobs:
       - name: Execute compile.sh  
         run: |  
           sudo chmod +x /opt/main/build/compile.sh  
-          sudo /opt/main/build/compile.sh  
+          /opt/main/build/compile.sh  
   
       - name: Upload artifacts  
         if: always()  
         uses: actions/upload-artifact@v3  
         with:  
           name: Armbian-Build  
-          path: /opt/main/build/output/*  
+          path: /opt/main/build/output/images/*  
   
       - name: Create Release  
         if: success()  
@@ -91,5 +91,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
         with:  
           upload_url: ${{ steps.create_release.outputs.upload_url }}  
-          asset_path: /opt/main/build/output/Armbian_*.img.xz  
+          asset_path: /opt/main/build/output/images/Armbian_*.img.xz  
           asset_name: Armbian_${{ github.event.inputs.RELEASE }}_${{ github.event.inputs.BOARD }
