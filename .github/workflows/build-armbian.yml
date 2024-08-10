@@ -81,7 +81,8 @@ jobs:
           ln -sf ${{ github.workspace }}/build ${{ github.workspace }}/build
           
           # 检查并合并 config 和 userpatches 文件夹    
-          cp -rf ${{ github.workspace }}/addboard/* ${{ github.workspace }}/build
+          cp -rf ${{ github.workspace }}/addboard/config/boards/tpm312.conf ${{ github.workspace }}/build/config/boards
+          cp -rf ${{ github.workspace }}/addboard/userpatches/* ${{ github.workspace }}/build/userpatches
   
       - name: Compile Armbian [ ${{ inputs.RELEASE }} ] 
         run: |  
