@@ -1,0 +1,6 @@
+diff --git a/arch/arm/dts/Makefile b/arch/arm/dts/Makefile
+--- a/arch/arm/dts/Makefile
++++ b/arch/arm/dts/Makefile
+@@ -1,2 +1,1 @@
+# SPDX-License-Identifier: GPL-2.0+
++dtb-$(CONFIG_ROCKCHIP_RK3399) += rk3399-tpm312.dtb
