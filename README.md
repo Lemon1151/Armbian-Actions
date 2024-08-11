@@ -1,5 +1,6 @@
 # Armbian-Actions  
-- 克隆armbian/build源码，自动化构建不受armbian支持的固件
+- 通过GitHub Actions构建armbian支持列表之外的设备固件
+- armbian源码https://github.com/armbian/build
 
 ## 鸣谢  
 - [armbian](https://github.com/armbian/build)
