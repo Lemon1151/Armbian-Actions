@@ -75,6 +75,7 @@ on:
         type: choice 
         options:
           - yes
+          - no
   
 jobs:  
   build-armbian:  
