@@ -61,8 +61,6 @@ on:
         default: 'no'  
         required: false  
         type: choice 
-        options:
-          - no
       COMPRESS_OUTPUTIMAGE:  
         description: 'Compress output image'  
         default: 'sha,xz'  
