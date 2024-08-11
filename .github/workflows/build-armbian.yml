@@ -56,7 +56,6 @@ on:
         type: choice
         options:
           - no
-          - yes
       KERNEL_CONFIGURE:  
         description: 'Configure kernel'  
         default: 'no'  
