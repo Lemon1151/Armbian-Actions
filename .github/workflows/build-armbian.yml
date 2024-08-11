@@ -31,6 +31,14 @@ on:
           - noble
           - bullseye
           - bookworm
+      Version:
+        description: 'Armbian Version'
+        default: 'main'
+        required: false 
+        type: choice
+        options: 
+          - main 
+          - v24.08
       BUILD_MINIMAL:  
         description: 'Build minimal system'  
         default: 'no'  
@@ -78,7 +86,7 @@ jobs:
       - name: Download source code
         run: |
           df -hT ${PWD}
-          git clone -q --single-branch --depth=1 --branch=main https://github.com/armbian/build.git build 
+          git clone -q --single-branch --depth=1 --branch=${{ github.event.inputs.Version }} https://github.com/armbian/build.git build 
           ln -sf ${{ github.workspace }}/build ${{ github.workspace }}/build
           
           # 复制 config 和 userpatches 目录文件    
