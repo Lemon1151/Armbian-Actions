@@ -34,9 +34,9 @@ DISABLE_UPDATE $(echo "${PKG_LIST}" | grep "^linux-dtb-")
 DISABLE_UPDATE $(echo "${PKG_LIST}" | grep "^linux-u-boot")
 
 #tihuan
-sed -i 's/Armbian-unofficial/Armbian OS/g' /etc/armbian-image-release && \  
-# sed -i 's/24.8.1-trunk/24.8.1/g' /etc/armbian-image-release && \  
-sed -i 's/Armbian-unofficial/Armbian OS/g' /etc/armbian-release && \  
+sed -i 's/Armbian-unofficial/Armbian OS/g' /etc/armbian-image-release 
+# sed -i 's/24.8.1-trunk/24.8.1/g' /etc/armbian-image-release
+sed -i 's/Armbian-unofficial/Armbian OS/g' /etc/armbian-release
 # sed -i 's/24.8.1-trunk/24.8.1/g' /etc/armbian-release
 
 sed -i 's/No end-user support/Armbian URL/g' /etc/update-motd.d/10-armbian-header  
