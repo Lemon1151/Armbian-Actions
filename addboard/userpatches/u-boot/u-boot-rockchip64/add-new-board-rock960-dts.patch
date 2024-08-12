@@ -9,6 +9,15 @@
  };
  
  &pinctrl {
+@@ -140,7 +140,7 @@
+ };
+ 
+ &usbdrd_dwc3_0 {
+-	dr_mode = "otg";
++	dr_mode = "host";
+ };
+ 
+ &usbdrd_dwc3_1 {
 --- a/arch/arm/dts/rk3399-rock960-u-boot.dtsi	2024-08-09 12:30:31.374076000 +0800
 +++ b/arch/arm/dts/rk3399-rock960-u-boot.dtsi	2024-08-12 08:31:09.163079000 +0800
 @@ -4,7 +4,7 @@
