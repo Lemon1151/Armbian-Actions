@@ -1,0 +1,50 @@
+--- a/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi	2024-08-09 12:30:31.374076000 +0800
++++ b/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi	2024-08-12 15:48:12.628478469 +0800
+@@ -83,6 +83,19 @@
+ 		regulator-always-on;
+ 		vin-supply = <&vcc5v0_sys>;
+ 	};
++	
++	vcc5v0_otg: vcc5v0-otg-regulator {
++		compatible = "regulator-fixed";
++		enable-active-high;
++		pinctrl-names = "default";
++		pinctrl-0 = <&otg_vbus_drv>;
++		gpio = <&gpio1 RK_PA3 GPIO_ACTIVE_HIGH>;
++		regulator-name = "vcc5v0_otg";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		regulator-always-on;
++		vin-supply = <&vcc5v0_sys>;
++	};
+
+ 	vcc_0v9: vcc-0v9 {
+ 		compatible = "regulator-fixed";
+@@ -502,6 +524,14 @@
+ 			rockchip,pins = <0 RK_PA3 RK_FUNC_GPIO &pcfg_pull_none>;
+ 		};
+ 	};
++	
++	usb {
++		otg_vbus_drv: otg-vbus-drv {
++			rockchip,pins =
++				<1 RK_PA3 RK_FUNC_GPIO &pcfg_pull_none>;
++
++		};
++	};
+ };
+ 
+ &pwm2 {
+@@ -617,10 +647,12 @@
+ };
+ 
+ &u2phy0_otg {
++	vbus-supply = <&vcc5v0_otg>;
+ 	status = "okay";
+ };
+ 
+ &u2phy1_otg {
++	vbus-supply = <&vcc5v0_otg>;
+ 	status = "okay";
+ };
+ 
