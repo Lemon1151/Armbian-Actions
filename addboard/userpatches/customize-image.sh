@@ -39,8 +39,8 @@ sed -i 's/Armbian-unofficial/Armbian OS/g' /etc/armbian-image-release
 sed -i 's/Armbian-unofficial/Armbian OS/g' /etc/armbian-release
 # sed -i 's/24.8.1-trunk/24.8.1/g' /etc/armbian-release
 
-sed -i 's/No end-user support/Armbian URL/g' /etc/update-motd.d/10-armbian-header  
-sed -i 's/built from trunk/https:\/\/github.com\/armbian\/build/g' /etc/update-motd.d/10-armbian-header
+sed -i 's/No end-user support/Builder User/g' /etc/update-motd.d/10-armbian-header  
+sed -i 's/built from trunk/Lemon1151 https:\/\/github.com\/Lemon1151\/Armbian-Actions/g' /etc/update-motd.d/10-armbian-header
 
 Main() {
 	case $RELEASE in
