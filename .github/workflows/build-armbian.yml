@@ -11,6 +11,7 @@ on:
         options:
           - fine3399
           - r08
+          - rock960
           - tpm312
           - tb-ls3399
           - xiaobao-nas
