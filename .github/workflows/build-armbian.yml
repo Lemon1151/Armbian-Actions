@@ -23,6 +23,7 @@ on:
         required: false 
         type: choice 
         options:
+          - legacy
           - current
           - edge
       RELEASE:  
