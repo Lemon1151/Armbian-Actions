@@ -134,18 +134,26 @@ jobs:
          
       - name: Prepare Kernel Packages  
         run: |  
-          cd ${GITHUB_WORKSPACE}/build/output/debs/
-          # 检查是否存在需要打包的deb文件  
-          if [ ! -f "linux-dtb-*.deb" ] || [ ! -f "linux-headers-*.deb" ] || [ ! -f "linux-image-*.deb" ]; then  
-            echo "One or more required .deb files were not found."  
-            exit 1  
-          fi 
+          cd "${GITHUB_WORKSPACE}/build/output/packages-hashed/"  
+      
+          # 使用find命令查找匹配的文件  
+          # 我们只关心以 'kernel-rockchip64-' 开头并以 '_arm64.tar' 结尾的文件  
+          for file in kernel-rockchip64-*_arm64.tar; do  
+          # 检查文件是否确实存在  
+            if [ -f "$file" ]; then    
           
-          # 打包kernel
-          tar -czvf armbian_kernel_${{ env.KERNEL_VERSION }}_${{ inputs.BOARD }}.tar.gz linux-dtb-*.deb linux-headers-*.deb linux-image-*.deb  
+                # 重命名文件  
+                mv "$file" "kernel_rockchip64_${KERNEL_VERSION}_${{ env.BOARD_MODEL }}.tar"  
           
-          # 移动打包后的文件
-          mv armbian_kernel_${{ env.KERNEL_VERSION }}_${{ env.BOARD_MODEL }}.tar.gz ${GITHUB_WORKSPACE}/
+                # 移动重命名的文件到目标位置  
+                mv "kernel_rockchip64_${KERNEL_VERSION}_${{ env.BOARD_MODEL }}.tar" "${GITHUB_WORKSPACE}/"  
+          
+                # 可选：打印一条消息以确认文件已被移动  
+                echo "Moved $file to ${GITHUB_WORKSPACE}/"  
+            else  
+                echo "File $file not found."  
+            fi  
+          done 
         
       - name: Upload Kernel Packages to Release  
         if: success()  
@@ -153,7 +161,7 @@ jobs:
         with:  
           tag: "armbian_kernel_${{ github.event.inputs.BOARD }}"  
           name: "armbian_kernel_${{ github.event.inputs.BOARD }}" 
-          artifacts: "${{ github.workspace }}/armbian_kernel_${{ env.KERNEL_VERSION }}_${{ env.BOARD_MODEL }}.tar.gz"  
+          artifacts: "${{ github.workspace }}/kernel_rockchip64_${KERNEL_VERSION}_${{ env.BOARD_MODEL }}.tar"  
           allowUpdates: true  
           removeArtifacts: false  
           replacesArtifacts: true  
