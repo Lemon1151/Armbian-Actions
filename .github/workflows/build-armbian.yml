@@ -108,20 +108,34 @@ jobs:
           echo "CURRENT_YEAR_MONTH=$(date +'%Y%m')" >> $GITHUB_ENV  
 
       - name: Prepare Release Metadata
-        run: |  
-          # 提取版本号
-          latest_image=$(ls ${{ github.workspace }}/build/output/images/Armbian-unofficial_*.img.xz | grep -oE 'Armbian-unofficial_[0-9.]+_.*' | sort -V | tail -n 1)    
-          version=$(echo "$latest_image" | cut -d'_' -f2)  
-  
+        run: |   
+          # 提取包含最新版本的镜像文件名  
+          latest_image=$(ls "${{ github.workspace }}/build/output/images/Armbian-unofficial_*.img.xz" | sort -V | tail -n 1)  
+      
+          # 提取armbian版本号（第二个字段）  
+          armbian_version=$(echo "$latest_image" | cut -d'_' -f2)  
+      
+          # 提取内核版本号（最后一个字段之前的第二个字段，假设字段由'_'分隔）    
+          kernel_version=$(echo "$latest_image" | awk -F'_' '{for(i=1;i<=NF;i++) if($i ~ /^[0-9]+\.[0-9]+\.[0-9]+$/) version=$i; if(i==NF) print version; exit}')  
+      
           # 将版本号设置为环境变量  
-          echo "VERSION=$version" >> $GITHUB_ENV
+          echo "ARMBIAN_VERSION=$armbian_version" >> $GITHUB_ENV  
+          echo "KERNEL_VERSION=$kernel_version" >> $GITHUB_ENV
          
       - name: Prepare Kernel Packages  
         run: |  
-          cd ${GITHUB_WORKSPACE}/build/output/packages-hashed/global/
+          cd ${GITHUB_WORKSPACE}/build/output/debs/
+          # 检查是否存在需要打包的deb文件  
+          if [ ! -f "linux-dtb-*.deb" ] || [ ! -f "linux-headers-*.deb" ] || [ ! -f "linux-image-*.deb" ]; then  
+            echo "One or more required .deb files were not found."  
+            exit 1  
+          fi 
+          
           # 打包kernel
-          tar -czvf armbian_kernel_${{ inputs.BOARD }}.tar.gz linux-dtb-current-rockchip64_*.deb linux-headers-current-rockchip64_*.deb linux-image-current-rockchip64_*.deb  
-          mv armbian_kernel_${{ inputs.BOARD }}.tar.gz ${GITHUB_WORKSPACE}/
+          tar -czvf armbian_kernel_${{ env.KERNEL_VERSION }}_${{ inputs.BOARD }}.tar.gz linux-dtb-*.deb linux-headers-*.deb linux-image-*.deb  
+          
+          # 移动打包后的文件
+          mv armbian_kernel_${{ env.KERNEL_VERSION }}_${{ inputs.BOARD }}.tar.gz ${GITHUB_WORKSPACE}/
         
       - name: Upload Kernel Packages to Release  
         if: success()  
@@ -129,7 +143,7 @@ jobs:
         with:  
           tag: "armbian_kernel_${{ github.event.inputs.BOARD }}"  
           name: "armbian_kernel_${{ github.event.inputs.BOARD }}" 
-          artifacts: "${{ github.workspace }}/armbian_kernel_${{ inputs.BOARD }}.tar.gz"  
+          artifacts: "${{ github.workspace }}/armbian_kernel_${{ env.KERNEL_VERSION }}_${{ inputs.BOARD }}.tar.gz"  
           allowUpdates: true  
           removeArtifacts: false  
           replacesArtifacts: true  
@@ -155,7 +169,7 @@ jobs:
           body: |  
             ### Armbian Image Information  
             - Release: ${{ github.event.inputs.RELEASE }}    
-            - Version: ${{ env.VERSION }}  
+            - Version: ${{ env.ARMBIAN_VERSION }}  
             ### Armbian Image Verification  
             - sha256sum   
           draft: false  
