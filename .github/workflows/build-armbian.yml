@@ -132,7 +132,7 @@ jobs:
           token: ${{ secrets.MY_TOKEN }}  
           body: |  
             ### Armbian Image Information  
-            - RELEASE: ${{ github.event.inputs.RELEASE }}    
+            - Release: ${{ github.event.inputs.RELEASE }}    
             - Version: ${{ env.VERSION }}  
             ### Armbian Image Verification  
             - sha256sum   
