@@ -136,7 +136,8 @@ jobs:
           token: ${{ secrets.MY_TOKEN }}  
           body: |  
             ### Armbian Kernel Packages  
-            - The kernel can be used to compile Armbian  
+            - The kernel can be used to compile Armbian
+            - Usage method: After unzipping, install the deb packages in order
           draft: false  
           prerelease: false 
           
