@@ -114,12 +114,22 @@ jobs:
       
           # 提取armbian版本号（第二个字段）  
           armbian_version=$(echo "$latest_image" | cut -d'_' -f2)  
+
+          # 提取板子型号（第三个字段）  
+          board_model=$(echo "$latest_image" | cut -d'_' -f3)
       
           # 提取内核版本号（最后一个字段之前的第二个字段，假设字段由'_'分隔）    
           kernel_version=$(echo "$latest_image" | awk -F'_' '{for(i=1;i<=NF;i++) if($i ~ /^[0-9]+\.[0-9]+\.[0-9]+$/) version=$i; if(i==NF) print version; exit}')  
+
+          # 验证kernel_version是否已正确设置（可选）  
+          if [ -z "$kernel_version" ]; then  
+            echo "Kernel version not found in filename: $latest_image"  
+            exit 1  
+          fi 
       
           # 将版本号设置为环境变量  
-          echo "ARMBIAN_VERSION=$armbian_version" >> $GITHUB_ENV  
+          echo "ARMBIAN_VERSION=$armbian_version" >> $GITHUB_ENV 
+          echo "BOARD_MODEL=$board_model" >> $GITHUB_ENV 
           echo "KERNEL_VERSION=$kernel_version" >> $GITHUB_ENV
          
       - name: Prepare Kernel Packages  
@@ -135,7 +145,7 @@ jobs:
           tar -czvf armbian_kernel_${{ env.KERNEL_VERSION }}_${{ inputs.BOARD }}.tar.gz linux-dtb-*.deb linux-headers-*.deb linux-image-*.deb  
           
           # 移动打包后的文件
-          mv armbian_kernel_${{ env.KERNEL_VERSION }}_${{ inputs.BOARD }}.tar.gz ${GITHUB_WORKSPACE}/
+          mv armbian_kernel_${{ env.KERNEL_VERSION }}_${{ env.BOARD_MODEL }}.tar.gz ${GITHUB_WORKSPACE}/
         
       - name: Upload Kernel Packages to Release  
         if: success()  
@@ -143,7 +153,7 @@ jobs:
         with:  
           tag: "armbian_kernel_${{ github.event.inputs.BOARD }}"  
           name: "armbian_kernel_${{ github.event.inputs.BOARD }}" 
-          artifacts: "${{ github.workspace }}/armbian_kernel_${{ env.KERNEL_VERSION }}_${{ inputs.BOARD }}.tar.gz"  
+          artifacts: "${{ github.workspace }}/armbian_kernel_${{ env.KERNEL_VERSION }}_${{ env.BOARD_MODEL }}.tar.gz"  
           allowUpdates: true  
           removeArtifacts: false  
           replacesArtifacts: true  
