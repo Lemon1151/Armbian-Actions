@@ -9,8 +9,6 @@ on:
         default: 'tpm312'
         type: choice
         options:
-          - evb1-ddr4-v10
-          - lubancat2
           - fine3399
           - r08
           - rock960
@@ -24,7 +22,6 @@ on:
         required: false 
         type: choice 
         options:
-          - legacy
           - current
           - edge
       RELEASE:  
