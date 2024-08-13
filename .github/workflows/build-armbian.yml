@@ -115,7 +115,31 @@ jobs:
   
           # 将版本号设置为环境变量  
           echo "VERSION=$version" >> $GITHUB_ENV
+         
+      - name: Prepare Kernel Packages  
+        run: |  
+          cd ${GITHUB_WORKSPACE}/build/output/packages-hashed/global/
+          # 打包kernel
+          tar -czvf armbian_kernel_${{ inputs.BOARD }}.tar.gz linux-dtb-current-rockchip64_*.deb linux-headers-current-rockchip64_*.deb linux-image-current-rockchip64_*.deb  
+          mv armbian_kernel_${{ inputs.BOARD }}.tar.gz ${GITHUB_WORKSPACE}/
         
+      - name: Upload Kernel Packages to Release  
+        if: success()  
+        uses: ncipollo/release-action@main  
+        with:  
+          tag: "armbian_kernel_${{ github.event.inputs.BOARD }}"  
+          name: "armbian_kernel_${{ github.event.inputs.BOARD }}" 
+          artifacts: "${{ github.workspace }}/armbian_kernel_${{ inputs.BOARD }}.tar.gz"  
+          allowUpdates: true  
+          removeArtifacts: false  
+          replacesArtifacts: true  
+          token: ${{ secrets.MY_TOKEN }}  
+          body: |  
+            ### Armbian Kernel Packages  
+            - The kernel can be used to compile Armbian  
+          draft: false  
+          prerelease: false 
+          
       - name: Upload image to Release  
         if: success() 
         uses: ncipollo/release-action@main
