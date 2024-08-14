@@ -124,7 +124,8 @@ jobs:
       - name: Prepare Kernel Packages  
         run: |  
           cd "${GITHUB_WORKSPACE}/build/output/packages-hashed/"
-      
+          
+          echo "Found files in directory:" 
           # 使用find命令查找匹配的文件  
           # 我们只关心以 'kernel-rockchip64-' 开头并以 '_arm64.tar' 结尾的文件  
           for file in kernel-rockchip64-*_arm64.tar; do  
