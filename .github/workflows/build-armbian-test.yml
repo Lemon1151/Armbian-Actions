@@ -136,7 +136,7 @@ jobs:
                 
                 # 验证kernel_version是否已正确设置
                 if [ -z "$kernel_version" ]; then  
-                    echo "Kernel version not found in filename: $latest_image"  
+                    echo "Kernel version not found in filename: $file"  
                     exit 1  
                 fi
                 echo "KERNEL_VERSION=$kernel_version" >> $GITHUB_ENV
