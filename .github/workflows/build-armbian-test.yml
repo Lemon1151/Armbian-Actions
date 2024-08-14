@@ -116,9 +116,10 @@ jobs:
           # 提取板子型号
           board_model=$(echo "$latest_image" | cut -d'_' -f3)
       
-          # 提取内核版本号    
-          kernel_version=$(echo "$latest_image" | awk -F'_' '{for(i=1;i<=NF;i++) if($i ~ /^[0-9]+\.[0-9]+\.[0-9]+$/) version=$i; if(i==NF) print version; exit}')  
-
+          # 提取内核版本号  
+          # kernel_version=$(echo "$latest_image" | awk -F'_' '{for(i=1;i<=NF;i++) if($i ~ /^[0-9]+\.[0-9]+\.[0-9]+$/) {print $i; exit}}') 
+          kernel_version=$(echo "$latest_image" | awk -F'_' '{for(i=NF;i>0;i--) if($i ~ /^[0-9]+\.[0-9]+\.[0-9]+$/) {print $i; exit}}')
+  
           # 验证kernel_version是否已正确设置（可选）  
           if [ -z "$kernel_version" ]; then  
             echo "Kernel version not found in filename: $latest_image"  
