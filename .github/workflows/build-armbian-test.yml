@@ -142,10 +142,10 @@ jobs:
                 echo "KERNEL_VERSION=$kernel_version" >> $GITHUB_ENV
                 
                 # 重命名文件  
-                mv "$file" "kernel_rockchip64_${KERNEL_VERSION}_${{ env.BOARD_MODEL }}.tar"  
+                mv "$file" "kernel_rockchip64_${kernel_version}_${{ env.BOARD_MODEL }}.tar"  
           
                 # 移动重命名的文件到目标位置  
-                mv "kernel_rockchip64_${KERNEL_VERSION}_${{ env.BOARD_MODEL }}.tar" "${GITHUB_WORKSPACE}/"  
+                mv "kernel_rockchip64_${kernel_version}_${{ env.BOARD_MODEL }}.tar" "${GITHUB_WORKSPACE}/"  
           
                 # 可选：打印一条消息以确认文件已被移动  
                 echo "Moved $file to ${GITHUB_WORKSPACE}/"  
