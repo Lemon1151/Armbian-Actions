@@ -116,31 +116,31 @@ jobs:
           # 提取板子型号
           board_model=$(echo "$latest_image" | cut -d'_' -f3)
       
-          # 提取内核版本号  
-          # kernel_version=$(echo "$latest_image" | awk -F'_' '{for(i=1;i<=NF;i++) if($i ~ /^[0-9]+\.[0-9]+\.[0-9]+$/) {print $i; exit}}') 
-          kernel_version=$(echo "$latest_image" | awk -F'_' '{for(i=NF;i>0;i--) if($i ~ /^[0-9]+\.[0-9]+\.[0-9]+$/) {print $i; exit}}')
-  
-          # 验证kernel_version是否已正确设置（可选）  
-          if [ -z "$kernel_version" ]; then  
-            echo "Kernel version not found in filename: $latest_image"  
-            exit 1  
-          fi 
-      
           # 将版本号设置为环境变量  
           echo "VERSION=$version" >> $GITHUB_ENV
           echo "BOARD_MODEL=$board_model" >> $GITHUB_ENV 
-          echo "KERNEL_VERSION=$kernel_version" >> $GITHUB_ENV
+          # echo "KERNEL_VERSION=$kernel_version" >> $GITHUB_ENV
          
       - name: Prepare Kernel Packages  
         run: |  
-          cd "${GITHUB_WORKSPACE}/build/output/packages-hashed/"  
+          cd "${GITHUB_WORKSPACE}/build/output/packages-hashed/"  i 
       
           # 使用find命令查找匹配的文件  
           # 我们只关心以 'kernel-rockchip64-' 开头并以 '_arm64.tar' 结尾的文件  
           for file in kernel-rockchip64-*_arm64.tar; do  
           # 检查文件是否确实存在  
-            if [ -f "$file" ]; then    
-          
+            if [ -f "$file" ]; then 
+              
+                # 提取内核版本号 
+                kernel_version=$(echo "$file" | awk -F'_' '{for(i=NF;i>0;i--) if($i ~ /^[0-9]+\.[0-9]+\.[0-9]+$/) {print $i; exit}}')
+                
+                # 验证kernel_version是否已正确设置
+                if [ -z "$kernel_version" ]; then  
+                    echo "Kernel version not found in filename: $latest_image"  
+                    exit 1  
+                fi
+                echo "KERNEL_VERSION=$kernel_version" >> $GITHUB_ENV
+                
                 # 重命名文件  
                 mv "$file" "kernel_rockchip64_${KERNEL_VERSION}_${{ env.BOARD_MODEL }}.tar"  
           
@@ -158,8 +158,8 @@ jobs:
         if: success()  
         uses: ncipollo/release-action@main  
         with:  
-          tag: "Armbian_Kernel_${{ github.event.inputs.BOARD }}"  
-          name: "Armbian_Kernel_${{ github.event.inputs.BOARD }}" 
+          tag: "Armbian_Kernel"
+          name: "Armbian_Kernel"
           artifacts: "${{ github.workspace }}/kernel_rockchip64_${KERNEL_VERSION}_${{ env.BOARD_MODEL }}.tar"  
           allowUpdates: true  
           removeArtifacts: false  
