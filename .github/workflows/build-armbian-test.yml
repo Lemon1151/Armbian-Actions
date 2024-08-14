@@ -162,7 +162,7 @@ jobs:
                 mv "$file" "kernel_rockchip64_${kernel_version}_${{ env.BOARD_MODEL }}.tar"  
           
                 # 移动重命名的文件到目标位置  
-                mv "kernel_rockchip64_${kernel_version}_${{ env.BOARD_MODEL }}.tar" "${GITHUB_WORKSPACE}/"  
+                mv "kernel_rockchip64_${{ env.KERNEL_VERSION }}_${{ env.BOARD_MODEL }}.tar" "${GITHUB_WORKSPACE}/"  
           
                 # 可选：打印一条消息以确认文件已被移动  
                 echo "Moved $file to ${GITHUB_WORKSPACE}/"  
@@ -177,7 +177,7 @@ jobs:
         with:  
           tag: "Armbian_Kernel"
           name: "Armbian_Kernel"
-          artifacts: "${{ github.workspace }}/kernel_rockchip64_${KERNEL_VERSION}_${{ env.BOARD_MODEL }}.tar"  
+          artifacts: "${{ github.workspace }}/kernel_rockchip64_${{ env.KERNEL_VERSION }}_${{ env.BOARD_MODEL }}.tar"  
           allowUpdates: true  
           removeArtifacts: false  
           replacesArtifacts: true  
