@@ -1,5 +1,5 @@
 # Armbian-Actions  
-- 通过GitHub Actions构建armbian支持列表之外的设备固件
+- 通过GitHub Actions构建armbian支持列表之外的rk3xxx设备固件
 - armbian源码https://github.com/armbian/build
 
 ## Links  
