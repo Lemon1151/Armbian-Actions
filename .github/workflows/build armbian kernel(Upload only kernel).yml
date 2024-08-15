@@ -134,7 +134,6 @@ jobs:
          
       - name: Prepare Kernel Packages  
         run: |  
-          # cd ${{ github.workspace }}/build/output/packages-hashed/
           cd "${GITHUB_WORKSPACE}/build/output/packages-hashed/"
           file=$(find . -maxdepth 1 -type f -name 'kernel-*.tar' | head -n 1)  
    
