@@ -1,4 +1,4 @@
-name: Build-Armbian-not upload the kernel
+name: Build Armbian (not upload the kernel)
   
 on:  
   workflow_dispatch:  
