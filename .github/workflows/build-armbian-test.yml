@@ -139,12 +139,12 @@ jobs:
    
           # 检查是否找到了文件  
           if [ -n "$file" ]; then  
-          echo "Found file: $file"  
-          # 重命名文件  
-          mv "$file" "kernel_${{ env.KERNEL_VERSIONL }}_${{ env.BOARD_MODEL }}.tar"  
-          echo "Renamed file to: kernel_${{ env.KERNEL_VERSIONL }}_${{ env.BOARD_MODEL }}.tar"  
-            else  
-          echo "No matching file found."  
+            echo "Found file: $file"  
+            # 重命名文件  
+            mv "$file" "kernel_${{ env.KERNEL_VERSIONL }}_${{ env.BOARD_MODEL }}.tar"  
+            echo "Renamed file to: kernel_${{ env.KERNEL_VERSIONL }}_${{ env.BOARD_MODEL }}.tar"  
+          else  
+            echo "No matching file found."  
           fi        
         
       - name: Upload Kernel Packages to Release  
