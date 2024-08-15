@@ -1,4 +1,4 @@
-name: Build Armbian test 
+name: Build Armbian Kernel(Upload only kernel)
   
 on:  
   workflow_dispatch:  
