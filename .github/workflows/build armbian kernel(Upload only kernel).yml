@@ -134,7 +134,7 @@ jobs:
          
       - name: Prepare Kernel Packages  
         run: |  
-          cd "${GITHUB_WORKSPACE}/build/output/packages-hashed/"
+          cd ${{ github.workspace }}/build/output/packages-hashed/
           file=$(find . -maxdepth 1 -type f -name 'kernel-*.tar' | head -n 1)  
    
           # 检查是否找到了文件  
@@ -157,7 +157,7 @@ jobs:
         with:  
           tag: "Armbian_Kernel"
           name: "Armbian_Kernel"
-          artifacts: "${GITHUB_WORKSPACE}/build/output/packages-hashed/kernel_${{ env.KERNEL_VERSION }}_${{ env.BOARD_MODEL }}.tar"  
+          artifacts: "${{ github.workspace }}/build/output/packages-hashed/kernel_${{ env.KERNEL_VERSION }}_${{ env.BOARD_MODEL }}.tar"  
           allowUpdates: true  
           removeArtifacts: false  
           replacesArtifacts: true  
