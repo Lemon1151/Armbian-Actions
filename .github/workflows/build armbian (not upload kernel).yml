@@ -9,6 +9,7 @@ on:
         default: 'tpm312'
         type: choice
         options:
+          - all
           - fine3399
           - r08
           - rock960
