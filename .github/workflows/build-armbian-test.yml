@@ -157,7 +157,7 @@ jobs:
         with:  
           tag: "Armbian_Kernel"
           name: "Armbian_Kernel"
-          artifacts: "${GITHUB_WORKSPACE}/build/output/*"  
+          artifacts: "${GITHUB_WORKSPACE}/build/output/packages-hashed/kernel_${{ env.KERNEL_VERSION }}_${{ env.BOARD_MODEL }}.tar"  
           allowUpdates: true  
           removeArtifacts: false  
           replacesArtifacts: true  
