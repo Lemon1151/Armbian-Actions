@@ -143,6 +143,10 @@ jobs:
             # 重命名文件  
             mv "$file" "kernel_${{ env.KERNEL_VERSION }}_${{ env.BOARD_MODEL }}.tar"  
             echo "Renamed file to: kernel_${{ env.KERNEL_VERSION }}_${{ env.BOARD_MODEL }}.tar"  
+            # 列出目录中的文件以验证重命名  
+            ls -l  
+            echo "Directory listing after renaming:"  
+            find . -maxdepth 1 -type f 
           else  
             echo "No matching file found."  
           fi        
@@ -153,7 +157,7 @@ jobs:
         with:  
           tag: "Armbian_Kernel"
           name: "Armbian_Kernel"
-          artifacts: "${GITHUB_WORKSPACE}/build/output/packages-hashed/kernel_${{ env.KERNEL_VERSION }}_${{ env.BOARD_MODEL }}.tar"  
+          artifacts: "${GITHUB_WORKSPACE}/build/output/*"  
           allowUpdates: true  
           removeArtifacts: false  
           replacesArtifacts: true  
