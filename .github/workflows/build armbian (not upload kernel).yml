@@ -23,6 +23,7 @@ on:
         required: false 
         type: choice 
         options:
+          - vendor
           - current
           - edge
       RELEASE:  
@@ -32,9 +33,9 @@ on:
         type: choice
         options:
           - jammy
+          - bookworm
           - noble
           - bullseye
-          - bookworm
       Version:
         description: 'Armbian Version'
         default: 'main'
