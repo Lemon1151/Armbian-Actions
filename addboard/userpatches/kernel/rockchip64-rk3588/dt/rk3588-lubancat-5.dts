@@ -402,7 +402,7 @@
 				port@0 {
 					reg = <0>;
 					usbc0_orien_sw: endpoint {
-						remote-endpoint = <&usbdp_phy0_orientation_switch>;
+						remote-endpoint = <&usbdp_phy1_orientation_switch>;
 					};
 				};
 
@@ -906,7 +906,7 @@
 };
 
 /* USB3.1/DP Combo PHY0 */
-&usbdp_phy0 {
+&usbdp_phy1 {
 	orientation-switch;
 	svid = <0xff01>;
 	sbu1-dc-gpios = <&gpio1 RK_PA0 GPIO_ACTIVE_HIGH>;
@@ -916,23 +916,23 @@
 	port {
 		#address-cells = <1>;
 		#size-cells = <0>;
-		usbdp_phy0_orientation_switch: endpoint@0 {
+		usbdp_phy1_orientation_switch: endpoint@0 {
 			reg = <0>;
 			remote-endpoint = <&usbc0_orien_sw>;
 		};
 
-		usbdp_phy0_dp_altmode_mux: endpoint@1 {
+		usbdp_phy1_dp_altmode_mux: endpoint@1 {
 			reg = <1>;
 			remote-endpoint = <&dp_altmode_mux>;
 		};
 	};
 };
 
-&usbdp_phy0_u3 {
-	status = "okay";
-};
+//&usbdp_phy0_u3 {
+//	status = "okay";
+//};
 
-&usbdp_phy0_dp {
+&usbdp_phy1_dp {
 	status = "okay";
 };
 
