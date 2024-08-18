@@ -33,12 +33,13 @@ DISABLE_UPDATE $(echo "${PKG_LIST}" | grep "^linux-image-")
 DISABLE_UPDATE $(echo "${PKG_LIST}" | grep "^linux-dtb-")
 DISABLE_UPDATE $(echo "${PKG_LIST}" | grep "^linux-u-boot")
 
-#tihuan
+# 替换Armbian-unofficial成Armbian OS
 sed -i 's/Armbian-unofficial/Armbian OS/g' /etc/armbian-image-release 
 # sed -i 's/24.8.1-trunk/24.8.1/g' /etc/armbian-image-release
 sed -i 's/Armbian-unofficial/Armbian OS/g' /etc/armbian-release
 # sed -i 's/24.8.1-trunk/24.8.1/g' /etc/armbian-release
 
+# 设置ssh连接显示信息
 sed -i 's/No end-user support/Builder User/g' /etc/update-motd.d/10-armbian-header  
 sed -i 's/built from trunk/Lemon1151 https:\/\/github.com\/Lemon1151\/Armbian-Actions/g' /etc/update-motd.d/10-armbian-header
 
