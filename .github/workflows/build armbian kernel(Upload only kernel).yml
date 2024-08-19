@@ -15,7 +15,7 @@ on:
           - tb-ls3399
           - zysj
       BRANCH:  
-        description: 'Armbian branch'  
+        description: 'Armbian kernel branch'  
         default: 'current'  
         required: false 
         type: choice 
