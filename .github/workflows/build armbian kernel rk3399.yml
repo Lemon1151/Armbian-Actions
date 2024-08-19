@@ -50,7 +50,7 @@ on:
           - no
   
 jobs:  
-  build-armbian:  
+  build-armbian-kernel:  
     runs-on: ubuntu-latest  
     steps:  
       - name: Checkout  
