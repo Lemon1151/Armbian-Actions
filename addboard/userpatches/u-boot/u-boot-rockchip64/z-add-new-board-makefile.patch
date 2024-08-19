@@ -1,5 +1,5 @@
 diff --git a/arch/arm/dts/Makefile b/arch/arm/dts/Makefile
-@@ -1,2 +1,7 @@
+@@ -1,2 +1,8 @@
  # SPDX-License-Identifier: GPL-2.0+
 +dtb-$(CONFIG_ROCKCHIP_RK3399) += \
 + rk3399-bozz-sw799a.dtb \
