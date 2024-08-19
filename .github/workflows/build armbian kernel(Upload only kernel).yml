@@ -39,19 +39,7 @@ on:
         type: choice
         options: 
           - main 
-          - v24.08
-      BUILD_DESKTOP:  
-        description: 'Build desktop environment'  
-        default: 'no'  
-        required: false  
-        type: choice
-        options:
-          - no
-      COMPRESS_OUTPUTIMAGE:  
-        description: 'Compress output image'  
-        default: 'sha,xz'  
-        required: false  
-        type: string  
+          - v24.08  
       BOOT_LOGO:  
         description: 'Include boot logo'  
         default: 'yes'  
@@ -62,7 +50,7 @@ on:
           - no
   
 jobs:  
-  build-armbian:  
+  build-armbian-kernel:  
     runs-on: ubuntu-latest  
     steps:  
       - name: Checkout  
@@ -82,12 +70,8 @@ jobs:
       - name: Compile Armbian [ ${{ inputs.BOARD }} ${{ inputs.RELEASE }} ] 
         run: |  
           cd ${GITHUB_WORKSPACE}/build/ 
-          ./compile.sh BOARD=${{ inputs.BOARD }} RELEASE=${{ inputs.RELEASE }} BRANCH=${{ inputs.BRANCH }} BUILD_MINIMAL=no BUILD_DESKTOP=${{ inputs.BUILD_DESKTOP }} \ 
-                           KERNEL_CONFIGURE=no COMPRESS_OUTPUTIMAGE=${{ inputs.COMPRESS_OUTPUTIMAGE }} BOOT_LOGO=${{ inputs.BOOT_LOGO }}
-          
-      - name: Set current year and month  
-        run: |  
-          echo "CURRENT_YEAR_MONTH=$(date +'%Y%m')" >> $GITHUB_ENV  
+          ./compile.sh BOARD=${{ inputs.BOARD }} RELEASE=${{ inputs.RELEASE }} BRANCH=${{ inputs.BRANCH }} BUILD_MINIMAL=no \
+                           BUILD_DESKTOP=no KERNEL_CONFIGURE=no COMPRESS_OUTPUTIMAGE=sha,xz BOOT_LOGO=${{ inputs.BOOT_LOGO }} 
 
       - name: Prepare Release Metadata
         run: |  
