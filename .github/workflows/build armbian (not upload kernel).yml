@@ -9,6 +9,7 @@ on:
         default: 'tpm312'
         type: choice
         options:
+          - bozz-sw799a
           - ls3588
           - lubancat5
           - fine3399
