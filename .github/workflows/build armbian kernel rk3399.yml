@@ -67,7 +67,7 @@ jobs:
           mkdir -p "${{ github.workspace }}/build/userpatches"
           cp -rf ${{ github.workspace }}/addboard/userpatches/* ${{ github.workspace }}/build/userpatches
   
-      - name: Compile Armbian [ ${{ inputs.BOARD }} ${{ inputs.RELEASE }} ] 
+      - name: Compile Armbian Kernel [ ${{ inputs.RELEASE }} ] 
         run: |  
           cd ${GITHUB_WORKSPACE}/build/ 
           ./compile.sh BOARD=${{ inputs.BOARD }} RELEASE=${{ inputs.RELEASE }} BRANCH=${{ inputs.BRANCH }} BUILD_MINIMAL=no \
