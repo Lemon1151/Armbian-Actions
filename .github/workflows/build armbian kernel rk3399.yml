@@ -1,4 +1,4 @@
-name: Build Armbian Kernel RK3399
+name: Build Armbian Kernel Rockchip
   
 on:  
   workflow_dispatch:  
@@ -108,8 +108,8 @@ jobs:
           if [ -n "$file" ]; then  
             echo "Found file: $file"  
             # 重命名文件  
-            mv "$file" "kernel_${{ env.KERNEL_VERSION }}_rk3399.tar"  
-            echo "Renamed file to: kernel_${{ env.KERNEL_VERSION }}_rk3399.tar"  
+            mv "$file" "kernel_${{ env.KERNEL_VERSION }}_rockchip.tar"  
+            echo "Renamed file to: kernel_${{ env.KERNEL_VERSION }}_rockchip.tar"  
             # 列出目录中的文件以验证重命名  
             ls -l  
             echo "Directory listing after renaming:"  
@@ -124,7 +124,7 @@ jobs:
         with:  
           tag: "Armbian_Kernel"
           name: "Armbian_Kernel"
-          artifacts: "${{ github.workspace }}/build/output/packages-hashed/kernel_${{ env.KERNEL_VERSION }}_rk3399.tar"  
+          artifacts: "${{ github.workspace }}/build/output/packages-hashed/kernel_${{ env.KERNEL_VERSION }}_rockchip.tar"  
           allowUpdates: true  
           removeArtifacts: false  
           replacesArtifacts: true  
