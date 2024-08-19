@@ -76,7 +76,8 @@ jobs:
       - name: Prepare Release Metadata
         run: |  
           # 提取版本号
-          latest_image=$(ls ${{ github.workspace }}/build/output/images/Armbian-unofficial_*.img.xz | grep -oE 'Armbian-unofficial_[0-9.]+_.*' | sort -V | tail -n 1)    
+          # latest_image=$(ls ${{ github.workspace }}/build/output/images/Armbian-unofficial_*.img.xz | grep -oE 'Armbian-unofficial_[0-9.]+_.*' | sort -V | tail -n 1)  
+          latest_image=$(ls Armbian-unofficial_*.img.xz | sort -V | tail -n 1) 
           version=$(echo "$latest_image" | cut -d'_' -f2)  
           
           # 提取板子型号  
