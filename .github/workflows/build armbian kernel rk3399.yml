@@ -1,4 +1,4 @@
-name: Build Armbian Kernel(Upload only kernel)
+name: Build Armbian Kernel RK3399
   
 on:  
   workflow_dispatch:  
