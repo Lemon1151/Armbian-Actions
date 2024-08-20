@@ -106,7 +106,7 @@ diff --git a/arch/arm/dts/rk3399-bozz-sw799a.dts b/arch/arm/dts/rk3399-bozz-sw79
 new file mode 100644
 --- /dev/null
 +++ b/arch/arm/dts/rk3399-bozz-sw799a.dts
-@@ -0,0 +1,534 @@
+@@ -0,0 +1,535 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +/dts-v1/;
 +
@@ -641,3 +641,4 @@ new file mode 100644
 +	status = "okay";
 +	dr_mode = "host";
 +};
++
