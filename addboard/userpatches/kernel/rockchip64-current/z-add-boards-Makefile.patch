@@ -1,9 +1,8 @@
 diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
 --- a/arch/arm64/boot/dts/rockchip/Makefile
 +++ b/arch/arm64/boot/dts/rockchip/Makefile
-@@ -1 +1,6 @@
+@@ -1 +1,5 @@
  # SPDX-License-Identifier: GPL-2.0
-+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-bozz-sw799a.dtb
 +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-r08.dtb
 +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-tpm312.dtb
 +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-tb-ls3399.dtb
