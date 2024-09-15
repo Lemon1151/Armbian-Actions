@@ -87,8 +87,29 @@ jobs:
       - name: Compile Armbian [ ${{ inputs.BOARD }} ${{ inputs.RELEASE }} ] 
         run: |  
           cd ${GITHUB_WORKSPACE}/build/ 
-          ./compile.sh BOARD=${{ inputs.BOARD }} RELEASE=${{ inputs.RELEASE }} BRANCH=${{ inputs.BRANCH }} BUILD_MINIMAL=no BUILD_DESKTOP=${{ inputs.BUILD_DESKTOP }} \
-                           KERNEL_CONFIGURE=no COMPRESS_OUTPUTIMAGE=${{ inputs.COMPRESS_OUTPUTIMAGE }} BOOT_LOGO=${{ inputs.BOOT_LOGO }} 
+          
+          # 当 BOARD 为 all 时，遍历所有板类型  
+          if [ "${{ inputs.BOARD }}" = "all" ]; then  
+            declare -a BOARDS=("fine3399" "r08" "rock960" "tpm312" "tb-ls3399" "xiaobao-nas" "zysj")  
+            for BOARD in "${BOARDS[@]}"; do  
+              echo "Compiling for board: $BOARD"  
+              ./compile.sh BOARD=$BOARD RELEASE=${{ inputs.RELEASE }} BRANCH=${{ inputs.BRANCH }} BUILD_MINIMAL=no BUILD_DESKTOP=${{ inputs.BUILD_DESKTOP }} \  
+                KERNEL_CONFIGURE=no COMPRESS_OUTPUTIMAGE=${{ inputs.COMPRESS_OUTPUTIMAGE }} BOOT_LOGO=${{ inputs.BOOT_LOGO }}  
+              if [ $? -ne 0 ]; then  
+                echo "Compilation failed for board: $BOARD"  
+                exit 1  
+              fi  
+            done  
+          else  
+            # 否则，仅对指定的 BOARD 进行编译  
+            ./compile.sh BOARD=${{ inputs.BOARD }} RELEASE=${{ inputs.RELEASE }} BRANCH=${{ inputs.BRANCH }} BUILD_MINIMAL=no BUILD_DESKTOP=${{ inputs.BUILD_DESKTOP }} \  
+              KERNEL_CONFIGURE=no COMPRESS_OUTPUTIMAGE=${{ inputs.COMPRESS_OUTPUTIMAGE }} BOOT_LOGO=${{ inputs.BOOT_LOGO }}  
+          fi  
+  
+          # 检查编译是否成功  
+          if [ $? -ne 0 ]; then  
+            exit 1  
+          fi 
           
       - name: Set current year and month  
         run: |  
