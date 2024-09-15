@@ -1,4 +1,4 @@
-name: Build Armbian (all borad)
+name: Build Armbian All Borad
   
 on:  
   workflow_dispatch:  
@@ -6,7 +6,7 @@ on:
       BOARD:  
         description: 'Board type'  
         required: true 
-        default: 'tpm312'
+        default: 'all'
         type: choice
         options:
           - all
@@ -39,7 +39,7 @@ on:
           - bullseye
       Version:
         description: 'Armbian Version'
-        default: 'main'
+        default: 'v24.08'
         required: false 
         type: choice
         options: 
