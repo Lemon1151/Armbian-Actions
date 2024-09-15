@@ -1,4 +1,4 @@
-name: Build Armbian (customize board)
+name: Build Armbian Customize Board
   
 on:  
   workflow_dispatch:  
