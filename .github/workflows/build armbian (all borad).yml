@@ -101,10 +101,10 @@ jobs:
             done  
           else  
             # 否则，仅对指定的 BOARD 进行编译  
-            ./compile.sh BOARD=${{ inputs.BOARD }} RELEASE=${{ inputs.RELEASE }} BRANCH=${{ inputs.BRANCH }} BUILD_MINIMAL=no BUILD_DESKTOP=${{ inputs.BUILD_DESKTOP }} \
+            ./compile.sh BOARD=$INPUT_BOARD RELEASE=${{ inputs.RELEASE }} BRANCH=${{ inputs.BRANCH }} BUILD_MINIMAL=no BUILD_DESKTOP=${{ inputs.BUILD_DESKTOP }} \
               KERNEL_CONFIGURE=no COMPRESS_OUTPUTIMAGE=${{ inputs.COMPRESS_OUTPUTIMAGE }} BOOT_LOGO=${{ inputs.BOOT_LOGO }}  
             if [ $? -ne 0 ]; then  
-              echo "Compilation failed for specified board: ${{ inputs.BOARD }}" >&2  
+              echo "Compilation failed for specified board: $INPUT_BOARD" >&2  
               exit 1  # 如果是指定单个板子且失败，则退出脚本  
             fi
           fi   
