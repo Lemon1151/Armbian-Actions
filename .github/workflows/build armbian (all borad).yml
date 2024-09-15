@@ -1,0 +1,125 @@
+name: Build Armbian (not upload kernel)
+  
+on:  
+  workflow_dispatch:  
+    inputs:  
+      BOARD:  
+        description: 'Board type'  
+        required: true 
+        default: 'tpm312'
+        type: choice
+        options:
+          - lubancat5
+          - fine3399
+          - r08
+          - rock960
+          - tpm312
+          - tb-ls3399
+          - xiaobao-nas
+          - zysj
+      BRANCH:  
+        description: 'Armbian branch'  
+        default: 'current'  
+        required: false 
+        type: choice 
+        options:
+          - legacy
+          - vendor
+          - current
+          - edge
+      RELEASE:  
+        description: 'Release name' 
+        default: 'bookworm'
+        required: true  
+        type: choice
+        options:
+          - jammy
+          - bookworm
+          - noble
+          - bullseye
+      Version:
+        description: 'Armbian Version'
+        default: 'main'
+        required: false 
+        type: choice
+        options: 
+          - main 
+          - v24.08
+      BUILD_DESKTOP:  
+        description: 'Build desktop environment'  
+        default: 'no'  
+        required: false  
+        type: choice
+        options:
+          - no
+      COMPRESS_OUTPUTIMAGE:  
+        description: 'Compress output image'  
+        default: 'sha,xz'  
+        required: false  
+        type: string  
+      BOOT_LOGO:  
+        description: 'Include boot logo'  
+        default: 'yes'  
+        required: false  
+        type: choice 
+        options:
+          - yes
+          - no
+  
+jobs:  
+  build-armbian:  
+    runs-on: ubuntu-latest  
+    steps:  
+      - name: Checkout  
+        uses: actions/checkout@v3    
+        
+      - name: Download source code
+        run: |
+          df -hT ${PWD}
+          git clone -q --single-branch --depth=1 --branch=${{ github.event.inputs.Version }} https://github.com/armbian/build.git build 
+          ln -sf ${{ github.workspace }}/build ${{ github.workspace }}/build
+          
+          # 复制 config 和 userpatches 目录文件    
+          cp -rf ${{ github.workspace }}/addboard/config/* ${{ github.workspace }}/build/config
+          mkdir -p "${{ github.workspace }}/build/userpatches"
+          cp -rf ${{ github.workspace }}/addboard/userpatches/* ${{ github.workspace }}/build/userpatches
+  
+      - name: Compile Armbian [ ${{ inputs.BOARD }} ${{ inputs.RELEASE }} ] 
+        run: |  
+          cd ${GITHUB_WORKSPACE}/build/ 
+          ./compile.sh BOARD=${{ inputs.BOARD }} RELEASE=${{ inputs.RELEASE }} BRANCH=${{ inputs.BRANCH }} BUILD_MINIMAL=no BUILD_DESKTOP=${{ inputs.BUILD_DESKTOP }} \
+                           KERNEL_CONFIGURE=no COMPRESS_OUTPUTIMAGE=${{ inputs.COMPRESS_OUTPUTIMAGE }} BOOT_LOGO=${{ inputs.BOOT_LOGO }} 
+          
+      - name: Set current year and month  
+        run: |  
+          echo "CURRENT_YEAR_MONTH=$(date +'%Y%m')" >> $GITHUB_ENV  
+
+      - name: Prepare Release Metadata
+        run: |  
+          # 提取版本号
+          # latest_image=$(ls ${{ github.workspace }}/build/output/images/Armbian-unofficial_*.img.xz | grep -oE 'Armbian-unofficial_[0-9.]+_.*' | sort -V | tail -n 1) 
+          latest_image=$(ls ${{ github.workspace }}/build/output/images/Armbian-unofficial_*.img.xz | sort -V | tail -n 1)
+          version=$(echo "$latest_image" | cut -d'_' -f2)  
+  
+          # 将版本号设置为环境变量  
+          echo "VERSION=$version" >> $GITHUB_ENV
+        
+      - name: Upload image to Release  
+        if: success() 
+        uses: ncipollo/release-action@main
+        with:  
+          tag: "Armbian_${{ github.event.inputs.Version }}_${{ github.event.inputs.RELEASE }}_${{ env.CURRENT_YEAR_MONTH }}"  
+          name: "Armbian_${{ github.event.inputs.Version }}_${{ github.event.inputs.RELEASE }}_${{ env.CURRENT_YEAR_MONTH }}"  
+          artifacts: "${{ github.workspace }}/build/output/images/*"  
+          allowUpdates: true 
+          removeArtifacts: false 
+          replacesArtifacts: true 
+          token: ${{ secrets.MY_TOKEN }}  
+          body: |  
+            ### Armbian Image Information  
+            - Release: ${{ github.event.inputs.RELEASE }}    
+            - Version: ${{ env.VERSION }}  
+            ### Armbian Image Verification  
+            - sha256sum   
+          draft: false  
+          prerelease: false  
