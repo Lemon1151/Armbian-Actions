@@ -1,4 +1,4 @@
-name: Build Armbian Kernel(Upload only kernel)
+name: Build Kernel Customize Board
   
 on:  
   workflow_dispatch:  
