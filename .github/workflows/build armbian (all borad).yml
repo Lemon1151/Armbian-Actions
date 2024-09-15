@@ -9,7 +9,7 @@ on:
         default: 'tpm312'
         type: choice
         options:
-          - lubancat5
+          - all
           - fine3399
           - r08
           - rock960
