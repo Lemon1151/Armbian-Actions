@@ -1,4 +1,4 @@
-name: Build Armbian Kernel Rockchip
+name: Build Armbian Kernel Rk3399
   
 on:  
   workflow_dispatch:  
