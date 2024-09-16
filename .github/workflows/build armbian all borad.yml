@@ -13,6 +13,7 @@ on:
           - fine3399
           - r08
           - rock960
+          - sg2710
           - tpm312
           - tb-ls3399
           - xiaobao-nas
@@ -90,7 +91,7 @@ jobs:
           
           # 当 BOARD 为 all 时，遍历所有板类型  
           if [ "${{ inputs.BOARD }}" = "all" ]; then  
-            declare -a BOARDS=("fine3399" "r08" "rock960" "tpm312" "tb-ls3399" "xiaobao-nas" "zysj")  
+            declare -a BOARDS=("fine3399" "r08" "rock960" "sg2710" "tpm312" "tb-ls3399" "xiaobao-nas" "zysj")  
             for BOARD in "${BOARDS[@]}"; do  
               echo "Compiling for board: $BOARD"  
               ./compile.sh BOARD=$BOARD RELEASE=${{ inputs.RELEASE }} BRANCH=${{ inputs.BRANCH }} BUILD_MINIMAL=no BUILD_DESKTOP=${{ inputs.BUILD_DESKTOP }} \
