@@ -9,7 +9,6 @@ on:
         default: 'tpm312'
         type: choice
         options:
-          - fine3399
           - r08
           - rock960
           - tpm312
@@ -21,7 +20,6 @@ on:
         required: false 
         type: choice 
         options:
-          - legacy
           - current
           - edge
       RELEASE:  
