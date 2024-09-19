@@ -29,6 +29,7 @@ case $BRANCH in
 		declare -g KERNEL_MAJOR_MINOR="5.10"
 		declare -g LINUXFAMILY=rockchip64
 		declare -g LINUXCONFIG='linux-rockchip64-'$BRANCH
+		KERNELPATCHDIR='rk35xx-legacy'
 		;;
 
 	vendor)
@@ -37,7 +38,7 @@ case $BRANCH in
 		declare -g LINUXCONFIG='linux-rockchip64-'$BRANCH
 		KERNELSOURCE='https://github.com/armbian/linux-rockchip.git'
 		KERNELBRANCH='branch:rk-6.1-rkr3'
-		KERNELPATCHDIR='rockchip64-vendor-6.1'
+		KERNELPATCHDIR='rk35xx-vendor-6.1'
 		;;
 	current)
 		declare -g KERNEL_MAJOR_MINOR="6.6"
