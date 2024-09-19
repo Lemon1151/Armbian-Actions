@@ -1,7 +1,7 @@
-diff --git a/drivers/staging/fbtft/fb_st7735r.c b/drivers/staging/fbtft/fb_st7735r.c
+diff --git a/drivers/staging/fbtft/fb_st7789v.c b/drivers/staging/fbtft/fb_st7789v.c
 index fe6852610910..102v254fd6dc 100644
---- a/drivers/staging/fbtft/fb_st7735r.c	2024-09-12 17:06:51.000000000 +0800
-+++ b/drivers/staging/fbtft/fb_st7735r.c	2024-09-19 12:36:23.982776000 +0800
+--- a/drivers/staging/fbtft/fb_st7789v.c	2024-09-12 17:06:51.000000000 +0800
++++ b/drivers/staging/fbtft/fb_st7789v.c	2024-09-19 12:36:23.982776000 +0800
 @@ -7,9 +7,13 @@
  
  #include <linux/bitops.h>
