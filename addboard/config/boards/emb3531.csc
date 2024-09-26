@@ -1,0 +1,12 @@
+# Rockchip RK3399 hexa core 2/4GB SoC eMMC GBE USB3 WiFi PCIE
+BOARD_NAME="EMB3531"
+BOARDFAMILY="rockchip64"
+BOARD_MAINTAINER="Lemon1151"
+BOOTCONFIG="emb-3531-rk3399_defconfig"
+KERNEL_TARGET="current,edge"
+FULL_DESKTOP="yes"
+BOOT_LOGO="desktop"
+BOOT_FDT_FILE="rockchip/rk3399-emb-3531.dtb"
+BOOT_SCENARIO="only-blobs"
+SRC_EXTLINUX="yes"
+SRC_CMDLINE="console=ttyS2,115200 console=tty0"
