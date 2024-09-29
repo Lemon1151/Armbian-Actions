@@ -10,7 +10,6 @@ on:
         type: choice
         options:
           - emb3531
-          - lubancat5
           - fine3399
           - r08
           - rock960
