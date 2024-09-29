@@ -92,26 +92,19 @@ diff --git a/arch/arm/dts/rk3399-emb-3531.dts b/arch/arm/dts/rk3399-emb-3531.dts
 new file mode 100644	
 --- /dev/null
 +++ b/arch/arm/dts/rk3399-emb-3531.dts
-@@ -0,0 +1,631 @@
+@@ -0,0 +1,551 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +/*
 + * Copyright (c) 2016 Fuzhou Rockchip Electronics Co., Ltd
 + */
 +
 +/dts-v1/;
-+
-+#include <dt-bindings/pwm/pwm.h>
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
 +#include "rk3399.dtsi"
-+#include "rk3399-opp.dtsi"
-+
 +/ {
 +	model = "NORCO EMB-3531";
 +	compatible = "norco,emb-3531", "rockchip,rk3399";
 +
 +	aliases {
-+		ethernet0 = &gmac;
 +		mmc0 = &sdio0;
 +		mmc1 = &sdmmc;
 +		mmc2 = &sdhci;
@@ -128,24 +121,15 @@ new file mode 100644
 +		#clock-cells = <0>;
 +	};
 +
-+	dc_12v: dc-12v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "dc_12v";
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-min-microvolt = <12000000>;
-+		regulator-max-microvolt = <12000000>;
++	pmu_a53 {
++		compatible = "arm,cortex-a53-pmu";
++		interrupts = <0x1 0x7 0x8 0x11>;
 +	};
 +
-+	sdio_pwrseq: sdio-pwrseq {
-+		compatible = "mmc-pwrseq-simple";
-+		clocks = <&rk808 1>;
-+		clock-names = "ext_clock";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&wifi_reg_on_h>;
-+		reset-gpios = <&gpio0 RK_PB2 GPIO_ACTIVE_LOW>; // bsp
++	pmu_a72 {
++		compatible = "arm,cortex-a72-pmu";
++		interrupts = <0x1 0x7 0x8 0x12>;
 +	};
-+
 +	vcca_0v9: vcca_0v9 {
 +		regulator-name = "vcca_0v9";
 +		regulator-always-on;
@@ -153,8 +137,7 @@ new file mode 100644
 +		regulator-min-microvolt = <900000>;
 +		regulator-max-microvolt = <900000>;
 +
-+	};
-+	
++	};	
 +	vdd_center: vdd-center {
 +		compatible = "pwm-regulator";
 +		pwms = <&pwm2 0 25000 1>;
@@ -194,31 +177,6 @@ new file mode 100644
 +		regulator-max-microvolt = <5000000>;
 +	};
 +
-+	vcc-4g {
-+		regulator-boot-on;
-+		pinctrl-0 = <&vcc_4g_gpio>;
-+		gpio = <&gpio0 RK_PA2 GPIO_ACTIVE_HIGH>;
-+		regulator-name = "vcc_4g";
-+		enable-active-high;
-+		compatible = "regulator-fixed";
-+		pinctrl-names = "default";
-+		regulator-always-on;
-+		vin-supply = <&vcc3v3_sys>;
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&leds_pins>;
-+		power_led: led-0 {
-+			gpios = <&gpio1 RK_PC7 GPIO_ACTIVE_HIGH>;
-+			label = "red:power";
-+			default-state = "on";
-+			linux,default-trigger = "default-on";
-+			status = "okay";
-+		};
-+	};
-+
 +	vcc_sd: vcc-sd {
 +		compatible = "regulator-fixed";
 +		enable-active-high;
@@ -236,34 +194,79 @@ new file mode 100644
 +		regulator-always-on;
 +		regulator-boot-on;
 +	};
++
++	pcie@f8000000 {
++		compatible = "rockchip,rk3399-pcie";
++		reg = <0x0 0xf8000000 0x0 0x2000000 0x0 0xfd000000 0x0 0x1000000>;
++		reg-names = "axi-base", "apb-base";
++		device_type = "pci";
++		#address-cells = <0x3>;
++		#size-cells = <0x2>;
++		#interrupt-cells = <0x1>;
++		aspm-no-l0s;
++		bus-range = <0x0 0x1f>;
++		clocks = <0x8 0xc5 0x8 0xc4 0x8 0x147 0x8 0xa0>;
++		clock-names = "aclk", "aclk-perf", "hclk", "pm";
++		interrupts = <0x0 0x31 0x4 0x0 0x0 0x32 0x4 0x0 0x0 0x33 0x4 0x0>;
++		interrupt-names = "sys", "legacy", "client";
++		interrupt-map-mask = <0x0 0x0 0x0 0x7>;
++		interrupt-map = <0x0 0x0 0x0 0x1 0x13 0x0 0x0 0x0 0x0 0x2 0x13 0x1 0x0 0x0 0x0 0x3 0x13 0x2 0x0 0x0 0x0 0x4 0x13 0x3>;
++		max-link-speed = <0x2>;
++		msi-map = <0x0 0x14 0x0 0x1000>;
++		phys = <0x15 0x0 0x15 0x1 0x15 0x2 0x15 0x3>;
++		phy-names = "pcie-phy-0", "pcie-phy-1", "pcie-phy-2", "pcie-phy-3";
++		ranges = <0x83000000 0x0 0xfa000000 0x0 0xfa000000 0x0 0x1e00000 0x81000000 0x0 0xfbe00000 0x0 0xfbe00000 0x0 0x100000>;
++		resets = <0x8 0x82 0x8 0x83 0x8 0x84 0x8 0x85 0x8 0x86 0x8 0x81 0x8 0x80>;
++		reset-names = "core", "mgmt", "mgmt-sticky", "pipe", "pm", "pclk", "aclk";
++		status = "okay";
++		ep-gpios = <0x16 0x19 0x0>;
++		num-lanes = <0x4>;
++		pinctrl-names = "default";
++		pinctrl-0 = <0x17>;
++		vpcie3v3-supply = <&vcc3v3_sys>;
++		vpcie1v8-supply = <&vcc_1v8>;
++		vpcie0v9-supply = <&vcca_0v9>;
++		phandle = <0xd6>;
++
++		interrupt-controller {
++			interrupt-controller;
++			#address-cells = <0x0>;
++			#interrupt-cells = <0x1>;
++			phandle = <0x13>;
++		};
++	};
++
++	ethernet@fe300000 {
++		compatible = "rockchip,rk3399-gmac";
++		reg = <0x0 0xfe300000 0x0 0x10000>;
++		interrupts = <0x0 0xc 0x4 0x0>;
++		interrupt-names = "macirq";
++		clocks = <0x8 0x69 0x8 0x67 0x8 0x68 0x8 0x66 0x8 0x6a 0x8 0xd5 0x8 0x166>;
++		clock-names = "stmmaceth", "mac_clk_rx", "mac_clk_tx", "clk_mac_ref", "clk_mac_refout", "aclk_mac", "pclk_mac";
++		power-domains = <0x1b 0x16>;
++		resets = <0x8 0x89>;
++		reset-names = "stmmaceth";
++		rockchip,grf = <0x1c>;
++		snps,txpbl = <0x4>;
++		status = "okay";
++		assigned-clocks = <0x8 0xa6>;
++		assigned-clock-parents = <0x1d>;
++		clock_in_out = "input";
++		phy-supply = <&clkin_gmac>;
++		phy-mode = "rgmii";
++		pinctrl-names = "default";
++		pinctrl-0 = <0x1f>;
++		snps,reset-gpio = <0x20 0xf 0x1>;
++		snps,reset-active-low;
++		snps,reset-delays-us = <0x0 0x2710 0xc350>;
++		tx_delay = <0x28>;
++		rx_delay = <0x11>;
++		phandle = <0xd7>;
++	};
 +};
 +
-+&cpu_l0 {
-+	cpu-supply = <&vdd_cpu_l>;
-+};
-+
-+&cpu_l1 {
-+	cpu-supply = <&vdd_cpu_l>;
-+};
-+
-+&cpu_l2 {
-+	cpu-supply = <&vdd_cpu_l>;
-+};
-+
-+&cpu_l3 {
-+	cpu-supply = <&vdd_cpu_l>;
-+};
-+
-+&cpu_b0 {
-+	cpu-supply = <&vdd_cpu_b>;
-+};
-+
-+&cpu_b1 {
-+	cpu-supply = <&vdd_cpu_b>;
-+};
-+
-+&gpu {
-+	mali-supply = <&vdd_gpu>;
++&io_domains {
++	sdmmc-supply = <&vcc_sdio>;
 +	status = "okay";
 +};
 +
@@ -280,17 +283,13 @@ new file mode 100644
 +	phy-mode = "rgmii";
 +	pinctrl-names = "default";
 +	pinctrl-0 = <&rgmii_pins>;
-+	snps,reset-gpio = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>; // bsp
++	snps,reset-gpio = <0x20 0xf 0x1>;
 +	snps,reset-active-low;
 +	snps,reset-delays-us = <0 10000 50000>;
 +	tx_delay = <0x28>;
 +	rx_delay = <0x11>;
 +};
-+
 +&i2c0 {
-+	clock-frequency = <400000>;
-+	i2c-scl-rising-time-ns = <168>;
-+	i2c-scl-falling-time-ns = <4>;
 +	status = "okay";
 +
 +	vdd_cpu_b: regulator@40 {
@@ -491,7 +490,6 @@ new file mode 100644
 +					regulator-suspend-microvolt = <3000000>;
 +				};
 +			};
-+
 +			vcc3v3_s3: vcc_lan: SWITCH_REG1 {
 +				regulator-name = "vcc3v3_s3";
 +				regulator-always-on;
@@ -509,7 +507,6 @@ new file mode 100644
 +					regulator-off-in-suspend;
 +				};
 +			};
-+
 +			vcca_0v9 {
 +				regulator-name = "vcca_0v9";
 +				regulator-always-on;
@@ -520,6 +517,7 @@ new file mode 100644
 +			};			
 +		};
 +	};
++
 +};
 +
 +&i2c1 {
@@ -527,11 +525,6 @@ new file mode 100644
 +};
 +
 +&i2c2 {
-+	status = "okay";
-+};
-+
-+&io_domains {
-+	sdmmc-supply = <&vcc_sdio>;
 +	status = "okay";
 +};
 +
@@ -543,58 +536,12 @@ new file mode 100644
 +	status = "okay";
 +};
 +
-+&saradc {
-+	status = "okay";
-+};
-+
-+&pcie_phy {
-+	status = "okay";
-+};
-+
-+&pcie0 {
-+	ep-gpios = <&gpio4 RK_PD3 GPIO_ACTIVE_HIGH>; // sch
-+	max-link-speed = <2>;
-+	num-lanes = <2>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pcie_clkreqn_cpm>;
-+	status = "okay";
-+};
-+
 +&sdhci {
 +	bus-width = <8>;
 +	mmc-hs400-1_8v;
 +	mmc-hs400-enhanced-strobe;
 +	non-removable;
 +	status = "okay";
-+};
-+
-+&sdio0 {
-+	bus-width = <4>;
-+	cap-sd-highspeed;
-+	cap-sdio-irq;
-+	clock-frequency = <50000000>;
-+	disable-wp;
-+	keep-power-in-suspend;
-+	max-frequency = <50000000>;
-+	mmc-pwrseq = <&sdio_pwrseq>;
-+	non-removable;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sdio0_bus4 &sdio0_cmd &sdio0_clk>;
-+	sd-uhs-sdr104;
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	status = "okay";
-+
-+	brcmf: wifi@1 {
-+		reg = <1>;
-+		compatible = "brcm,bcm4329-fmac";
-+		interrupt-parent = <&gpio0>;
-+		interrupts = <RK_PA3 GPIO_ACTIVE_HIGH>;
-+		interrupt-names = "host-wake";
-+		brcm,drive-strength = <5>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&wifi_host_wake_l>;
-+	};
 +};
 +
 +&sdmmc {
@@ -655,23 +602,6 @@ new file mode 100644
 +			rockchip,pins =
 +				<1 RK_PC5 RK_FUNC_GPIO &pcfg_pull_up>;
 +		};
-+
-+		vcc_4g_gpio: vcc-4g-gpio {
-+			rockchip,pins = <0 RK_PA2 RK_FUNC_GPIO &pcfg_pull_none>;
-+			};
-+
-+	};
-+
-+	sdio-pwrseq {
-+		wifi_reg_on_h: wifi-reg-on-h {
-+			rockchip,pins = <0 RK_PB2 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+
-+	wifi {
-+		wifi_host_wake_l: wifi-host-wake-l {
-+			rockchip,pins = <0 RK_PA3 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
 +	};
 +
 +	usb2 {
@@ -686,12 +616,6 @@ new file mode 100644
 +			rockchip,pins = <0 RK_PA1 RK_FUNC_GPIO &pcfg_pull_up>;
 +		};
 +	};
-+
-+	leds {
-+		leds_pins: leds-pins {
-+			rockchip,pins = <1 RK_PC7 RK_FUNC_GPIO &pcfg_pull_up>;
-+		};
-+	};
 +};
 +
 +&vopb {
@@ -699,10 +623,6 @@ new file mode 100644
 +};
 +
 +&vopb_mmu {
-+	status = "okay";
-+};
-+
-+&cdn_dp {
 +	status = "okay";
 +};
 +
