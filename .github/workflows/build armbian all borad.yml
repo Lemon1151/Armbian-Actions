@@ -81,23 +81,17 @@ jobs:
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
-          # 清理 Docker 镜像
+          # 清理 Docker 镜像和软件缓存
           docker_images_ids=$(docker images -q)
           if [ -n "$docker_images_ids" ]; then
             docker rmi $docker_images_ids
           fi
-          # 清理未使用的镜像
           docker image prune -a -f
-          # 卸载特定软件包
           sudo -E apt-get -y purge azure-cli ghc* zulu* llvm* firefox google* dotnet* openjdk* mysql* php* mongodb* dotnet* moby* snapd* android* || true
-          # 自动移除不再需要的包
           sudo -E apt-get -qq autoremove --purge
-          # 清理 APT 缓存
           sudo -E apt-get -qq clean
-          # 设置时区
+          # 设置时区并创建工作目录
           sudo timedatectl set-timezone "${TZ}"
-
-          # 创建工作目录并更改所有权
           sudo mkdir -p /mnt/workdir
           sudo chown $USER:$GROUPS /mnt/workdir
           df -Th
@@ -114,6 +108,7 @@ jobs:
           cp -rf ${{ github.workspace }}/addboard/config/* config
           mkdir -p userpatches
           cp -rf ${{ github.workspace }}/addboard/userpatches/* userpatches
+          ls -la
   
       - name: Compile Armbian [ ${{ inputs.BOARD }} ${{ inputs.RELEASE }} ] 
         run: |  
