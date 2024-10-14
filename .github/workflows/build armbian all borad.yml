@@ -113,7 +113,7 @@ jobs:
   
       - name: Compile Armbian [ ${{ inputs.BOARD }} ${{ inputs.RELEASE }} ] 
         run: |  
-          cd ${GITHUB_WORKSPACE}/build/ 
+          cd build/
           
           # 当 BOARD 为 all 时，遍历所有板类型  
           if [ "${{ inputs.BOARD }}" = "all" ]; then  
