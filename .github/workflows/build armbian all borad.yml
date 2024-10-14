@@ -66,6 +66,8 @@ on:
         options:
           - yes
           - no
+env:
+  TZ: America/New_York
   
 jobs:  
   build-armbian:  
@@ -87,7 +89,7 @@ jobs:
           # 清理未使用的镜像
           docker image prune -a -f
           # 卸载特定软件包
-          sudo -E apt-get -y purge azure-cli ghc* zulu* hhvm llvm* firefox google* dotnet* powershell openjdk* adoptopenjdk* mysql* php* mongodb* dotnet* moby* snapd* android* || true
+          sudo -E apt-get -y purge azure-cli ghc* zulu* llvm* firefox google* dotnet* openjdk* mysql* php* mongodb* dotnet* moby* snapd* android* || true
           # 自动移除不再需要的包
           sudo -E apt-get -qq autoremove --purge
           # 清理 APT 缓存
