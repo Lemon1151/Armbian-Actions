@@ -72,22 +72,45 @@ jobs:
     runs-on: ubuntu-latest  
     steps:  
       - name: Checkout  
-        uses: actions/checkout@v3    
-        
+        uses: actions/checkout@v3  
+      
+      - name: Initialization environment
+        id: init
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          # 清理 Docker 镜像和软件缓存
+          docker_images_ids=$(docker images -q)
+          if [ -n "$docker_images_ids" ]; then
+            docker rmi $docker_images_ids
+          fi
+          docker image prune -a -f
+          sudo -E apt-get -y purge azure-cli ghc* zulu* llvm* firefox google* dotnet* openjdk* mysql* php* mongodb* dotnet* moby* snapd* android* || true
+          sudo -E apt-get -qq autoremove --purge
+          sudo -E apt-get -qq clean
+          # 设置时区并创建工作目录
+          sudo timedatectl set-timezone "${TZ}"
+          sudo mkdir -p /mnt/workdir
+          sudo chown $USER:$GROUPS /mnt/workdir
+          df -Th
+  
       - name: Download source code
+        working-directory: /mnt/workdir
         run: |
           df -hT ${PWD}
           git clone -q --single-branch --depth=1 --branch=${{ github.event.inputs.Version }} https://github.com/armbian/build.git build 
-          ln -sf ${{ github.workspace }}/build ${{ github.workspace }}/build
-          
+          ln -sf /mnt/workdir/build $GITHUB_WORKSPACE/build
+
+          cd build/
           # 复制 config 和 userpatches 目录文件    
-          cp -rf ${{ github.workspace }}/addboard/config/* ${{ github.workspace }}/build/config
-          mkdir -p "${{ github.workspace }}/build/userpatches"
-          cp -rf ${{ github.workspace }}/addboard/userpatches/* ${{ github.workspace }}/build/userpatches
+          cp -rf ${{ github.workspace }}/addboard/config/* config
+          mkdir -p userpatches
+          cp -rf ${{ github.workspace }}/addboard/userpatches/* userpatches
+          ls -la
   
       - name: Compile Armbian [ ${{ inputs.BOARD }} ${{ inputs.RELEASE }} ] 
         run: |  
-          cd ${GITHUB_WORKSPACE}/build/ 
+          cd /mnt/workdir/build/ 
           ./compile.sh BOARD=${{ inputs.BOARD }} RELEASE=${{ inputs.RELEASE }} BRANCH=${{ inputs.BRANCH }} BUILD_MINIMAL=no BUILD_DESKTOP=${{ inputs.BUILD_DESKTOP }} \
                            KERNEL_CONFIGURE=no COMPRESS_OUTPUTIMAGE=${{ inputs.COMPRESS_OUTPUTIMAGE }} BOOT_LOGO=${{ inputs.BOOT_LOGO }} 
           
