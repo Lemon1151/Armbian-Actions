@@ -3,7 +3,7 @@ diff --git a/arch/arm/dts/Makefile b/arch/arm/dts/Makefile
  # SPDX-License-Identifier: GPL-2.0+
 +dtb-$(CONFIG_ROCKCHIP_RK3399) += \
 +	rk3399-emb-3531.dtb \
-+  rk3399-fmx1.dtb \
++ rk3399-fmx1.dtb \
 +	rk3399-tb-ls3399.dtb \
 +	rk3399-zysj.dtb \
 +	rk3399-tpm312.dtb \
