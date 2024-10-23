@@ -86,7 +86,7 @@ new file mode 100644
 @@ -0,0 +1,14 @@
 +// SPDX-License-Identifier: GPL-2.0+
 +#include "rk3399-u-boot.dtsi"
-+#include "rk3399-sdram-lpddr3-1866.dtsi"
++#include "rk3399-sdram-lpddr3-samsung-4GB-1866.dtsi"
 +
 +/ {
 +	chosen {
