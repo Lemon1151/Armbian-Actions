@@ -394,7 +394,7 @@ new file mode 100644
 +		cooling-min-state = <0>;
 +		cooling-max-state = <6>;
 +		pwms = <&pwm1 0 128000 0>;
-+	    status = "okay";
++		status = "okay";
 +	};
 +
 +	gpio-keys {
