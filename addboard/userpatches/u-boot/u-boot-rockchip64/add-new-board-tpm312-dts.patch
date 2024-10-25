@@ -391,8 +391,8 @@ new file mode 100644
 +		compatible = "pwm-fan";
 +		cooling-levels = <0 40 80 120 160 200 255>;
 +		#cooling-cells = <2>;
-+		cooling-min-state = <0>
-+		cooling-max-state = <6>
++		cooling-min-state = <0>;
++		cooling-max-state = <6>;
 +		pwms = <&pwm1 0 128000 0>;
 +	    status = "okay";
 +	};
