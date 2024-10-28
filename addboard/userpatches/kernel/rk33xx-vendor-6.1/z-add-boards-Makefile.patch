@@ -1,0 +1,9 @@
+diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
+--- a/arch/arm64/boot/dts/rockchip/Makefile
++++ b/arch/arm64/boot/dts/rockchip/Makefile
+@@ -60,4 +60,5 @@
+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-ficus.dtb
+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-firefly.dtb
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-fmx1.dtb
+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-gru-bob.dtb
+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-gru-kevin.dtb
