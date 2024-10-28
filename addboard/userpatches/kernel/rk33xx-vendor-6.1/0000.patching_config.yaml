@@ -1,7 +1,7 @@
 config:
 
   # Just some info stuff; not used by the patching scripts
-  name: rk35xx-6.1
+  name: rk33xx-6.1
   kind: kernel
   type: vendor # or: vendor
   branch: rk-6.1-rkr3
