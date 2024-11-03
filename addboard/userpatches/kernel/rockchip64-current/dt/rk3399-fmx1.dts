@@ -13,6 +13,16 @@
 	model = "Rockchip FMX1 PRO";
 	compatible = "rockchip fmx1 pro","rockchip,rk3399-box";
 
+	aliases {
+		mmc0 = &sdio0;
+		mmc1 = &sdmmc;
+		mmc2 = &sdhci;
+	};
+
+	chosen {
+		stdout-path = "serial2:1500000n8";
+	};
+
 	vcc1v8_s0: vcc1v8-s0 {
 		compatible = "regulator-fixed";
 		regulator-name = "vcc1v8_s0";
