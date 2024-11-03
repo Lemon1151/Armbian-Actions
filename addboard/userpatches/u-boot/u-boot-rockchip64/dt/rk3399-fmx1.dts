@@ -4,13 +4,15 @@
  *
  */
 
-#include <dt-bindings/pwm/pwm.h>
+/dts-v1/;
 #include <dt-bindings/input/input.h>
+#include <dt-bindings/pwm/pwm.h>
 #include "rk3399.dtsi"
 #include "rk3399-opp.dtsi"
 
 / {
-	model = "Rockchip FMX1";
+	model = "Rockchip FMX1 Pro";
+	compatible = "rockchip,fmx1-pro", "rockchip,rk3399";
 
 	aliases {
 		mmc0 = &sdio0;
