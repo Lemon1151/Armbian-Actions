@@ -10,8 +10,8 @@
 #include "rk3399-opp.dtsi"
 
 / {
-	model = "Rockchip FMX1 PRO";
-	compatible = "rockchip fmx1 pro","rockchip,rk3399-box";
+	model = "Rockchip FMX1";
+	compatible = "rockchip,fmx1", "rockchip,rk3399";
 
 	aliases {
 		mmc0 = &sdio0;
