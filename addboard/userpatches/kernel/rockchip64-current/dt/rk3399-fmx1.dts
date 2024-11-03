@@ -718,13 +718,10 @@
 
 &pmu_io_domains {
 	status = "okay";
-	pmu1830-supply = <&vcc_1v8>;
+	pmu1830-supply = <&vcc_3v3>;
 };
 
 &vopb {
-	assigned-clocks = <&cru DCLK_VOP0_DIV>;
-	assigned-clock-parents = <&cru PLL_VPLL>;
-	support-multi-area;
 	status = "okay";
 };
 
@@ -733,25 +730,9 @@
 };
 
 &vopl {
-	assigned-clocks = <&cru DCLK_VOP1_DIV>;
-	assigned-clock-parents = <&cru PLL_CPLL>;
-	support-multi-area;
 	status = "okay";
 };
 
 &vopl_mmu {
 	status = "okay";
-};
-
-&cdn_dp {
-	status = "okay";
-	extcon = <&fusb0>;
-};
-
-&hdmi_in_vopl {
-	status = "disabled";
-};
-
-&dp_in_vopb {
-	status = "disabled";
 };
