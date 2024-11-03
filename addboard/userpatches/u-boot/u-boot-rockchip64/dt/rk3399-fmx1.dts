@@ -736,16 +736,3 @@
 &vopl_mmu {
 	status = "okay";
 };
-
-&cdn_dp {
-	status = "okay";
-	extcon = <&fusb0>;
-};
-
-&hdmi_in_vopl {
-	status = "disabled";
-};
-
-&dp_in_vopb {
-	status = "disabled";
-};
