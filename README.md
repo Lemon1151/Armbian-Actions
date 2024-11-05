@@ -1,5 +1,5 @@
 # 仓库说明 
-- rk35xx-legacy存放legacy（5.10）,rk35xx-vendor-6.1（6.1）的patch/dts文件
+- rk35xx-legacy存放legacy（5.10）,rk35xx-vendor-6.1存放vendor（6.1）的patch/dts文件
 - archive/rockchip-rk3588-6.11(目前6.11)存放最新内核patch/dts文件
 - legacy,vendor,edge,current必须要xxx.conf的KERNEL_TARGET选项支持
 
