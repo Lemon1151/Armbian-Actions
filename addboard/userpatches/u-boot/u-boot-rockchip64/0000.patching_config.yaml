@@ -1,15 +1,7 @@
 config:
 
-  # Just some info stuff; not used by the patching scripts
-  name: u-boot-rockchip64
-  kind: u-boot
-  type: vendor # or: vendor
-  branch: u-boot-v2022.07
-  last-known-good-tag: v2022.07
-
-  # .dts files in these directories will be copied as-is to the build tree; later ones overwrite earlier ones.
-  # This is meant to provide a way to "add a board DTS" without having to null-patch them in.
-  dts-directories:
-    - { source: "dt", target: "arch/arm/dts" }
+  overlay-directories:
+    - { source: "defconfig", target: "configs" } # copies all files in defconfig dir to the configs/ dir in the u-boot source tree
+    - { source: "dt", target: "arch/arm/dts" } # copies all files in dt dir to the arch/arm/dts dir in the u-boot source tree
 
 

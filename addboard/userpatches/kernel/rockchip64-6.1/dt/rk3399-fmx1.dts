@@ -8,8 +8,8 @@
 #include "rk3399-fmx1.dtsi"
 
 / {
-	model = "Rockchip RK3399 Board rev2 (BOX)";
-	compatible = "rockchip-box-rev2","rockchip,rk3399-box";
+	model = "Rockchip FMX1";
+	compatible = "rockchip fmx1","rockchip,rk3399-box";
 };
 
 &pinctrl {
@@ -105,10 +105,6 @@
 
 &dp_in_vopb {
 	status = "disabled";
-};
-
-&route_hdmi {
-	status = "okay";
 };
 
 &hdmi {
