@@ -1,3 +1,5 @@
+stable:kernel-6.1;current:kernel-6.6;edge:kernel-最新
+
 # 仓库说明 
 - rk3399-test分支是测试分支，主要用来验证dts/patch的可行性
 - rockchip64-current存放current（rockchip64-6.6）,edge（目前是rockchip64-6.11）的patch/dts文件通过软链接让一份文件实现复用
