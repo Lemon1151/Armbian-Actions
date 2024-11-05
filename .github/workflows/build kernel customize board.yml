@@ -6,21 +6,18 @@ on:
       BOARD:  
         description: 'Board type'  
         required: true 
-        default: 'tpm312'
+        default: 'test'
         type: choice
         options:
-          - r08
-          - rock960
-          - tpm312
-          - tb-ls3399
-          - zysj
+          - test
       BRANCH:  
         description: 'Armbian kernel branch'  
         default: 'current'  
         required: false 
         type: choice 
         options:
-          - stable
+          - legacy
+          - vendor
           - current
           - edge
       RELEASE:  
