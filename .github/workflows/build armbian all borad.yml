@@ -10,20 +10,14 @@ on:
         type: choice
         options:
           - all
-          - fine3399
-          - r08
-          - rock960
-          - sg2710
-          - tpm312
-          - tb-ls3399
-          - xiaobao-nas
-          - zysj
       BRANCH:  
         description: 'Armbian branch'  
         default: 'current'  
         required: false 
         type: choice 
         options:
+          - legacy
+          - vendor
           - current
           - edge
       RELEASE:  
