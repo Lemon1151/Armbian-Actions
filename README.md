@@ -1,4 +1,4 @@
-stable:kernel-6.1;current:kernel-6.6;edge:kernel-最新
+- stable：kernel-6.1；current：kernel-6.6；edge：kernel-最新
 
 # 仓库说明 
 - rk3399-test分支是测试分支，主要用来验证dts/patch的可行性
