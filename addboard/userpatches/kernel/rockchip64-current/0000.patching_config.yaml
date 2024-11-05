@@ -1,0 +1,13 @@
+config: # This is file 'patch/kernel/archive/rockchip64-6.8/0000.patching_config.yaml'
+
+  # .dts files in these directories will be copied as-is to the build tree; later ones overwrite earlier ones.
+  # This is meant to provide a way to "add a board DTS" without having to null-patch them in.
+  dts-directories:
+    - { source: "dt", target: "arch/arm64/boot/dts/rockchip" }
+
+  # every file in these directories will be copied as-is to the build tree; later ones overwrite earlier ones
+  # This is meant as a way to have overlays, bare, in a directory, without having to null-patch them in.
+  # @TODO need a solution to auto-Makefile the overlays as well
+  overlay-directories:
+    - { source: "overlay", target: "arch/arm64/boot/dts/rockchip/overlay" }
+
