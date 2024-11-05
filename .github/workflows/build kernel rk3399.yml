@@ -149,7 +149,7 @@ jobs:
         with:  
           tag: "Armbian_Kernel"
           name: "Armbian_Kernel"
-          artifacts: "${{ github.workspace }}/build/output/packages-hashed/kernel_${{ env.KERNEL_VERSION }}_rockchip.tar"  
+          artifacts: "${{ github.workspace }}/build/output/packages-hashed/kernel_${{ env.KERNEL_VERSION }}_rk3399.tar"  
           allowUpdates: true  
           removeArtifacts: false  
           replacesArtifacts: true  
