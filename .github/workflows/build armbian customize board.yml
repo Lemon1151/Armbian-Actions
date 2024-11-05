@@ -9,9 +9,7 @@ on:
         default: 'tpm312'
         type: choice
         options:
-          - emb3531
           - fine3399
-          - fmx1
           - r08
           - rock960
           - sg2710
@@ -25,8 +23,7 @@ on:
         required: false 
         type: choice 
         options:
-          - legacy
-          - vendor
+          - stable
           - current
           - edge
       RELEASE:  

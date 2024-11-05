@@ -24,8 +24,6 @@ on:
         required: false 
         type: choice 
         options:
-          - legacy
-          - vendor
           - current
           - edge
       RELEASE:  

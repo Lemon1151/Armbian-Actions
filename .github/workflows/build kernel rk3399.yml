@@ -1,4 +1,4 @@
-name: Build Kernel Rockchip
+name: Build Kernel RK3399
   
 on:  
   workflow_dispatch:  
@@ -134,7 +134,7 @@ jobs:
             echo "Found file: $file"  
             # 重命名文件  
             mv "$file" "kernel_${{ env.KERNEL_VERSION }}_rockchip.tar"  
-            echo "Renamed file to: kernel_${{ env.KERNEL_VERSION }}_rockchip.tar"  
+            echo "Renamed file to: kernel_${{ env.KERNEL_VERSION }}_rk3399.tar"  
             # 列出目录中的文件以验证重命名  
             ls -l  
             echo "Directory listing after renaming:"  
