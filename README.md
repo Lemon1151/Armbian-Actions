@@ -1,13 +1,11 @@
 # 仓库说明 
-- rockchip64-current存放current（rockchip64-6.6）,edge（目前是rockchip64-6.11）的patch/dts文件
-  通过软链接让一份文件实现复用
-- rockchip64-6.1存放stable（自定义内核分支，armbian没有这个分支，默认为current-6.6）
-- stable必须要在xxx.conf的KERNEL_TARGET选项添加stable
+- rk35xx-legacy存放legacy（5.10）,rk35xx-vendor-6.1（6.1）的patch/dts文件
+- archive/rockchip-rk3588-6.11(目前6.11)存放最新内核patch/dts文件
+- legacy,vendor,edge,current必须要xxx.conf的KERNEL_TARGET选项支持
 
 # Armbian-Actions  
-- 通过GitHub Actions构建armbian支持列表之外的rk3xxx设备固件
+- 通过GitHub Actions构建armbian支持列表之外的rk35xx设备固件
 - 此仓库仅提供armbian构建方法、思路；如出现固件不能用、外设不能用等等问题请自行寻找解决方法
-- Armbian branch的stable选项必须要构建的板卡支持这两个分支才选择，否则会报错
 - Armbian kernel是Armbian构建过程中自动编译生成的产物
 - Armbian源码https://github.com/armbian/build
 
