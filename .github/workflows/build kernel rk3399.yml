@@ -1,4 +1,4 @@
-name: Build Kernel RK3399
+name: Build Kernel RK35xx
   
 on:  
   workflow_dispatch:  
@@ -6,20 +6,18 @@ on:
       BOARD:  
         description: 'Board type'  
         required: true 
-        default: 'tpm312'
+        default: 'test'
         type: choice
         options:
-          - r08
-          - rock960
-          - tpm312
-          - tb-ls3399
-          - zysj
+          - test
       BRANCH:  
         description: 'Armbian kernel branch'  
         default: 'current'  
         required: false 
         type: choice 
         options:
+          - legacy
+          - vendor
           - current
           - edge
       RELEASE:  
@@ -134,7 +132,7 @@ jobs:
             echo "Found file: $file"  
             # 重命名文件  
             mv "$file" "kernel_${{ env.KERNEL_VERSION }}_rockchip.tar"  
-            echo "Renamed file to: kernel_${{ env.KERNEL_VERSION }}_rk3399.tar"  
+            echo "Renamed file to: kernel_${{ env.KERNEL_VERSION }}_rk35xx.tar"  
             # 列出目录中的文件以验证重命名  
             ls -l  
             echo "Directory listing after renaming:"  
@@ -149,7 +147,7 @@ jobs:
         with:  
           tag: "Armbian_Kernel"
           name: "Armbian_Kernel"
-          artifacts: "${{ github.workspace }}/build/output/packages-hashed/kernel_${{ env.KERNEL_VERSION }}_rockchip.tar"  
+          artifacts: "${{ github.workspace }}/build/output/packages-hashed/kernel_${{ env.KERNEL_VERSION }}_rk35xx.tar"  
           allowUpdates: true  
           removeArtifacts: false  
           replacesArtifacts: true  
