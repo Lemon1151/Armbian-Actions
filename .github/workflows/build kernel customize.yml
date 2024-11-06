@@ -20,6 +20,7 @@ on:
         required: false 
         type: choice 
         options:
+          - stable
           - current
           - edge
       RELEASE:  
@@ -133,8 +134,8 @@ jobs:
           if [ -n "$file" ]; then  
             echo "Found file: $file"  
             # 重命名文件  
-            mv "$file" "kernel_${{ env.KERNEL_VERSION }}_rockchip.tar"  
-            echo "Renamed file to: kernel_${{ env.KERNEL_VERSION }}_rk3399.tar"  
+            mv "$file" "kernel_${{ env.KERNEL_VERSION }}_${{ env.BOARD_MODEL }}.tar"  
+            echo "Renamed file to: kernel_${{ env.KERNEL_VERSION }}_${{ env.BOARD_MODEL }}.tar"  
             # 列出目录中的文件以验证重命名  
             ls -l  
             echo "Directory listing after renaming:"  
@@ -149,7 +150,7 @@ jobs:
         with:  
           tag: "Armbian_Kernel"
           name: "Armbian_Kernel"
-          artifacts: "${{ github.workspace }}/build/output/packages-hashed/kernel_${{ env.KERNEL_VERSION }}_rk3399.tar"  
+          artifacts: "${{ github.workspace }}/build/output/packages-hashed/kernel_${{ env.KERNEL_VERSION }}_${{ env.BOARD_MODEL }}.tar"  
           allowUpdates: true  
           removeArtifacts: false  
           replacesArtifacts: true  
