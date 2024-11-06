@@ -1,4 +1,4 @@
-name: Build Kernel Customize Board
+name: Build Armbian Kernel Customize
   
 on:  
   workflow_dispatch:  
