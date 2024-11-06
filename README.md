@@ -14,7 +14,6 @@
 - stable必须要在xxx.conf的KERNEL_TARGET选项添加stable
 
 ## yml工作流文件说明  
-- build armbian all borad.yml：构建列表内所有设备armbian固件，不上传kernel headers文件
 - build armbian customize board.yml：单独构建某设备armbian固件，不上传kernel headers文件
 - build armbian kernel customize.yml：单独构建某设备armbian固件，将headers、image、dtb、libc-dev上传至Armbian Kernel标签
 - build kernel customize.yml：单独构建，只上传headers、image、dtb、libc-dev至Armbian Kernel标签
