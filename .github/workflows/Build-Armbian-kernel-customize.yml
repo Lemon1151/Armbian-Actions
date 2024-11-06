@@ -1,4 +1,4 @@
-name: Build Kernel Customize Board
+name: Build-Armbian-kernel-customize 
   
 on:  
   workflow_dispatch:  
