@@ -10,7 +10,7 @@
 - 通过GitHub Actions构建armbian支持列表之外的rk3xxx设备固件
 - 此仓库仅提供armbian构建方法、思路；如出现固件不能用、外设不能用等等问题请自行寻找解决方法
 - Armbian branch的vendor|legacy选项必须要构建的板卡支持这两个分支才选择，否则会报错
-- Armbian kernel是Armbian构建过程中自动编译生成的产物
+- Armbian kernel：linux-dtb、linux-headers、linux-image、linux-libc-dev四个deb包
 - Armbian源码https://github.com/armbian/build
 
 ## Links  
