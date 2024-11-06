@@ -20,6 +20,7 @@ on:
         required: false 
         type: choice 
         options:
+          - stable
           - current
           - edge
       RELEASE:  
