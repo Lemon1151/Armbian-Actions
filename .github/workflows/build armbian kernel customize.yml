@@ -9,10 +9,15 @@ on:
         default: 'tpm312'
         type: choice
         options:
+          - emb3531
+          - fine3399
+          - fmx1
           - r08
           - rock960
+          - sg2710
           - tpm312
           - tb-ls3399
+          - xiaobao-nas
           - zysj
       BRANCH:  
         description: 'Armbian kernel branch'  
