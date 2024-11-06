@@ -104,6 +104,10 @@ jobs:
           ./compile.sh BOARD=${{ inputs.BOARD }} RELEASE=${{ inputs.RELEASE }} BRANCH=${{ inputs.BRANCH }} BUILD_MINIMAL=no \
                            BUILD_DESKTOP=no KERNEL_CONFIGURE=no COMPRESS_OUTPUTIMAGE=sha,xz BOOT_LOGO=${{ inputs.BOOT_LOGO }} 
 
+      - name: Set current year and month  
+        run: |  
+          echo "CURRENT_YEAR_MONTH=$(date +'%Y%m')" >> $GITHUB_ENV 
+
       - name: Prepare Release Metadata
         run: |  
           # 提取版本号
@@ -163,6 +167,26 @@ jobs:
           body: |  
             ### Armbian Kernel Packages  
             - The kernel can be used to compile Armbian
-            - Usage method: After unzipping, install the deb packages in order
+            - linux-dtb,linux-headers,linux-image,linux-libc-dev .deb
           draft: false  
           prerelease: false    
+
+      - name: Upload image to Release  
+        if: success() 
+        uses: ncipollo/release-action@main
+        with:  
+          tag: "Armbian_${{ github.event.inputs.Version }}_${{ github.event.inputs.RELEASE }}_${{ env.CURRENT_YEAR_MONTH }}"  
+          name: "Armbian_${{ github.event.inputs.Version }}_${{ github.event.inputs.RELEASE }}_${{ env.CURRENT_YEAR_MONTH }}"  
+          artifacts: "${{ github.workspace }}/build/output/images/*"  
+          allowUpdates: true 
+          removeArtifacts: false 
+          replacesArtifacts: true 
+          token: ${{ secrets.MY_TOKEN }}  
+          body: |  
+            ### Armbian Image Information  
+            - Release: ${{ github.event.inputs.RELEASE }}    
+            - Version: ${{ env.VERSION }}  
+            ### Armbian Image Verification  
+            - sha256sum   
+          draft: false  
+          prerelease: false 
