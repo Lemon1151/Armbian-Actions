@@ -10,7 +10,7 @@ on:
         type: choice
         options:
           - all
-          - Cyber Aib RK3588
+          - cyber-aib-rk3588
       BRANCH:  
         description: 'Armbian branch'  
         default: 'current'  
