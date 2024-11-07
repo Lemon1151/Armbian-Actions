@@ -6,10 +6,10 @@ on:
       BOARD:  
         description: 'Board type'  
         required: true 
-        default: 'Cyber Aib RK3588'
+        default: 'cyber-aib-rk3588'
         type: choice
         options:
-        - Cyber Aib RK3588
+        - cyber-aib-rk3588
       BRANCH:  
         description: 'Armbian branch'  
         default: 'current'  
