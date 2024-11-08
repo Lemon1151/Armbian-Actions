@@ -406,12 +406,12 @@ new file mode 100644
 +	cooling-maps {
 +		map2 {
 +			trip = <&cpu_warm>;
-+			cooling-device = <&fan0 1 40>;
++			cooling-device = <&fan0 1 2>;
 +		};
 +
 +		map3 {
 +			trip = <&cpu_hot>;
-+			cooling-device = <&fan0 5 200>;
++			cooling-device = <&fan0 4 5>;
 +		};
 +	};
 +};
