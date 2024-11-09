@@ -129,6 +129,7 @@
 
 &sdmmc0 {
 	status = "disabled";
+};
 
 &combphy0_us {
 	status = "okay";
