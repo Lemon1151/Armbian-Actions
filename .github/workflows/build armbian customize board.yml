@@ -9,8 +9,8 @@ on:
         default: 'cyber-aib-rk3588'
         type: choice
         options:
-        - cyber-aib-rk3588
-        - lx-r51ns
+          - cyber-aib-rk3588
+          - lx-r51ns
       BRANCH:  
         description: 'Armbian branch'  
         default: 'current'  
