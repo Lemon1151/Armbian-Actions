@@ -1,0 +1,13 @@
+# Rockchip RK3568 quad core 2-8GB SoC GBe eMMC USB3
+BOARD_NAME="LX R51NS"
+BOARDFAMILY="rk35xx"
+BOARD_MAINTAINER="Lemon1151"
+BOOTCONFIG="lx-r51ns-rk3568_defconfig"
+KERNEL_TARGET="legacy,vendor"
+KERNEL_TEST_TARGET="vendor"
+FULL_DESKTOP="yes"
+BOOT_LOGO="desktop"
+BOOT_FDT_FILE="rockchip/rk3568-lx-r51ns.dtb"
+BOOT_SCENARIO="spl-blobs"
+IMAGE_PARTITION_TABLE="gpt"
+BOOTFS_TYPE="fat"
