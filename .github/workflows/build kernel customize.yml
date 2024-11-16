@@ -32,11 +32,12 @@ on:
           - bookworm
       Version:
         description: 'Armbian Kernel Version'
-        default: 'main'
+        default: 'v24.11'
         required: false 
         type: choice
         options: 
-          - main 
+          - main
+          - v24.11
           - v24.08
       BOOT_LOGO:  
         description: 'Include boot logo'  
