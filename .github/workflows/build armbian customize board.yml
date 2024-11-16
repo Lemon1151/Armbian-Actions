@@ -40,11 +40,12 @@ on:
           - bullseye
       Version:
         description: 'Armbian Version'
-        default: 'main'
+        default: 'v24.11'
         required: false 
         type: choice
         options: 
-          - main 
+          - main
+          - v24.11
           - v24.08
       BUILD_DESKTOP:  
         description: 'Build desktop environment'  
