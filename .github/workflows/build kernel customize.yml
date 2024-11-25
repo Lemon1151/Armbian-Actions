@@ -28,6 +28,16 @@ on:
           - stable
           - current
           - edge
+      Version:
+        description: 'Armbian Version'
+        default: 'v24.11'
+        required: false 
+        type: choice
+        options: 
+          - main
+          - v24.11
+          - v24.08 
+
 env:
   TZ: America/New_York
   
