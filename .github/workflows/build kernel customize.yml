@@ -28,33 +28,6 @@ on:
           - stable
           - current
           - edge
-      RELEASE:  
-        description: 'Release name' 
-        default: 'bookworm'
-        required: true  
-        type: choice
-        options:
-          - jammy
-          - noble
-          - bullseye
-          - bookworm
-      Version:
-        description: 'Armbian Kernel Version'
-        default: 'v24.11'
-        required: false 
-        type: choice
-        options: 
-          - main
-          - v24.11
-          - v24.08
-      BOOT_LOGO:  
-        description: 'Include boot logo'  
-        default: 'yes'  
-        required: false  
-        type: choice 
-        options:
-          - yes
-          - no
 env:
   TZ: America/New_York
   
@@ -99,56 +72,37 @@ jobs:
           cp -rf ${{ github.workspace }}/addboard/userpatches/* userpatches
           ls -la
   
-      - name: Compile Armbian Kernel [ ${{ inputs.RELEASE }} ] 
+      - name: Compile Kernel [ ${{ inputs.BOARD }} ${{ inputs.BRANCH }} ] 
         run: |  
           cd /mnt/workdir/build/ 
-          ./compile.sh BOARD=${{ inputs.BOARD }} RELEASE=${{ inputs.RELEASE }} BRANCH=${{ inputs.BRANCH }} BUILD_MINIMAL=no \
-                           BUILD_DESKTOP=no KERNEL_CONFIGURE=no COMPRESS_OUTPUTIMAGE=sha,xz BOOT_LOGO=${{ inputs.BOOT_LOGO }}   
+          ./compile.sh kernel BOARD=${{ inputs.BOARD }} BRANCH=${{ inputs.BRANCH }} DEB_COMPRESS=xz   
 
-      - name: Prepare Release Metadata
-        run: |  
-          # 提取版本号
-          # latest_image=$(ls ${{ github.workspace }}/build/output/images/Armbian-unofficial_*.img.xz | grep -oE 'Armbian-unofficial_[0-9.]+_.*' | sort -V | tail -n 1)  
-          latest_image=$(ls ${{ github.workspace }}/build/output/images/Armbian-unofficial_*.img.xz | sort -V | tail -n 1) 
-          version=$(echo "$latest_image" | cut -d'_' -f2)  
+      - name: Prepare Kernel  
+        run: | 
+          cd "${GITHUB_WORKSPACE}/build/output/debs/"
+          file=$(find . -maxdepth 1 -type f -name 'linux-image-*.deb' | head -n 1)
+          if [ -n "$file" ]; then
+            echo "Found file: $file"
+            KERNEL_VERSION=$(echo "$file" | cut -d '_' -f 5 | cut -d '-' -f 1)
+            echo "KERNEL_VERSION=$KERNEL_VERSION" >> $GITHUB_ENV
+            echo "Extracted KERNEL_VERSION: $KERNEL_VERSION"
+          else
+            echo "No matching file found. Available files are:"
+            ls -1 "${GITHUB_WORKSPACE}/build/output/debs/"
+            exit 1
+          fi
           
-          # 提取板子型号  
-          board_model=$(echo "$latest_image" | cut -d'_' -f3)  
+          matching_files_array=($(ls linux-dtb* linux-headers* linux-image* linux-libc* 2>/dev/null))
           
-          # 由于我们不想在awk中处理扩展名，我们可以先删除它  
-          filename_no_ext=$(echo "$latest_image" | sed 's/\.img\.xz$//')  
-  
-          # 然后使用awk提取版本号
-          kernel_version=$(echo "$filename_no_ext" | awk -F'_' '{print $(NF)}') 
-  
-          echo "Latest Image: $latest_image"  
-          echo "Version: $version"  
-          echo "Board Model: $board_model"  
-          echo "Kernel Version: $kernel_version"
-      
-          # 将版本号设置为环境变量  
-          echo "VERSION=$version" >> $GITHUB_ENV
-          echo "BOARD_MODEL=$board_model" >> $GITHUB_ENV 
-          echo "KERNEL_VERSION=$kernel_version" >> $GITHUB_ENV
-         
-      - name: Prepare Kernel Packages  
-        run: |  
-          cd "${GITHUB_WORKSPACE}/build/output/packages-hashed/"
-          file=$(find . -maxdepth 1 -type f -name 'kernel-*.tar' | head -n 1)  
-   
-          # 检查是否找到了文件  
-          if [ -n "$file" ]; then  
-            echo "Found file: $file"  
-            # 重命名文件  
-            mv "$file" "kernel_${{ env.KERNEL_VERSION }}_${{ env.BOARD_MODEL }}.tar"  
-            echo "Renamed file to: kernel_${{ env.KERNEL_VERSION }}_${{ env.BOARD_MODEL }}.tar"  
-            # 列出目录中的文件以验证重命名  
-            ls -l  
-            echo "Directory listing after renaming:"  
-            find . -maxdepth 1 -type f 
-          else  
-            echo "No matching file found."  
-          fi        
+          if [ ${#matching_files_array[@]} -gt 0 ]; then
+            tar -czf "../kernel-${KERNEL_VERSION}-${{ inputs.BRANCH }}-${{ inputs.BOARD }}.tar.gz" "${matching_files_array[@]}"
+            echo "Compressed matching files to kernel-${KERNEL_VERSION}-${{ inputs.BRANCH }}-${{ inputs.BOARD }}.tar.gz"
+          else
+            echo "No matching files found for compression."
+            exit 1
+          fi
+          
+          tar -tzf "../kernel-${KERNEL_VERSION}-${{ inputs.BRANCH }}-${{ inputs.BOARD }}.tar.gz" || { echo "Failed to create valid tar.gz file"; exit 1; }
         
       - name: Upload Kernel Packages to Release  
         if: success()  
@@ -156,7 +110,7 @@ jobs:
         with:  
           tag: "Armbian_Kernel"
           name: "Armbian_Kernel"
-          artifacts: "${{ github.workspace }}/build/output/packages-hashed/kernel_${{ env.KERNEL_VERSION }}_${{ env.BOARD_MODEL }}.tar"  
+          artifacts: "${{ github.workspace }}/build/output/kernel-${{ env.KERNEL_VERSION }}-${{ inputs.BRANCH }}-${{ inputs.BOARD }}.tar.gz"  
           allowUpdates: true  
           removeArtifacts: false  
           replacesArtifacts: true  
