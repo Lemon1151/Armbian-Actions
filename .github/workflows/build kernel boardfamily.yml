@@ -1,4 +1,4 @@
-name: Build Kernel Customize
+name: Build Kernel Family
   
 on:  
   workflow_dispatch:  
@@ -91,11 +91,16 @@ jobs:
         run: | 
           cd "${GITHUB_WORKSPACE}/build/output/debs/"
           file=$(find . -maxdepth 1 -type f -name 'linux-image-*.deb' | head -n 1)
+
           if [ -n "$file" ]; then
             echo "Found file: $file"
+            # KERNEL_VERSION=$(echo "$file" | sed -n 's/.*__\([0-9]*\.[0-9]*\.[0-9]*\)-.*/\1/p')
             KERNEL_VERSION=$(echo "$file" | cut -d '_' -f 5 | cut -d '-' -f 1)
             echo "KERNEL_VERSION=$KERNEL_VERSION" >> $GITHUB_ENV
             echo "Extracted KERNEL_VERSION: $KERNEL_VERSION"
+            BOARDFAMILY=$(echo "$file" | cut -d '-' -f 3- | cut -d '_' -f 1)
+            echo "BOARDFAMILY=$BOARDFAMILY" >> $GITHUB_ENV
+            echo "Extracted BOARDFAMILY: $BOARDFAMILY"
           else
             echo "No matching file found. Available files are:"
             ls -1 "${GITHUB_WORKSPACE}/build/output/debs/"
@@ -105,14 +110,14 @@ jobs:
           matching_files_array=($(ls linux-dtb* linux-headers* linux-image* linux-libc* 2>/dev/null))
           
           if [ ${#matching_files_array[@]} -gt 0 ]; then
-            tar -czf "../kernel-${KERNEL_VERSION}-${{ inputs.BRANCH }}-${{ inputs.BOARD }}.tar.gz" "${matching_files_array[@]}"
-            echo "Compressed matching files to kernel-${KERNEL_VERSION}-${{ inputs.BRANCH }}-${{ inputs.BOARD }}.tar.gz"
+            tar -czf "../kernel-${KERNEL_VERSION}-${BOARDFAMILY}.tar.gz" "${matching_files_array[@]}"
+            echo "Compressed matching files to kernel-${KERNEL_VERSION}-${BOARDFAMILY}.tar.gz"
           else
             echo "No matching files found for compression."
             exit 1
           fi
           
-          tar -tzf "../kernel-${KERNEL_VERSION}-${{ inputs.BRANCH }}-${{ inputs.BOARD }}.tar.gz" || { echo "Failed to create valid tar.gz file"; exit 1; }
+          tar -tzf "../kernel-${KERNEL_VERSION}-${BOARDFAMILY}.tar.gz" || { echo "Failed to create valid tar.gz file"; exit 1; }
         
       - name: Upload Kernel Packages to Release  
         if: success()  
@@ -120,7 +125,7 @@ jobs:
         with:  
           tag: "Armbian_Kernel"
           name: "Armbian_Kernel"
-          artifacts: "${{ github.workspace }}/build/output/kernel-${{ env.KERNEL_VERSION }}-${{ inputs.BRANCH }}-${{ inputs.BOARD }}.tar.gz"  
+          artifacts: "${{ github.workspace }}/build/output/kernel-${KERNEL_VERSION}-${BOARDFAMILY}.tar.gz"  
           allowUpdates: true  
           removeArtifacts: false  
           replacesArtifacts: true  
