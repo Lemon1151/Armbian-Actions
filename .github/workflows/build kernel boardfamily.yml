@@ -1,4 +1,4 @@
-name: Build Kernel Family
+name: Build Kernel BoardFamily
   
 on:  
   workflow_dispatch:  
@@ -134,5 +134,6 @@ jobs:
             ### Armbian Kernel Packages  
             - The kernel can be used to compile Armbian
             - Usage method: After unzipping, install the deb packages in order
+            - Deb Packages: linux-dtb | linux-headers | linux-image | linux-libc-dev
           draft: false  
           prerelease: false    
