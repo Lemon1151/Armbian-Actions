@@ -9,7 +9,7 @@
 ## 仓库详情
 - rk3399-main用来构建6.6内核，由于6.12kerneld的rk3399-opp被合并，不可用于6.12及以上内核构建
 - stable：kernel-6.1；current：kernel-6.6；edge：kernel-最新
-- rk3399-test分支是测试分支，主要用来验证dts/patch的可行性和6.12及以上内核
+- rk3399-beta分支是测试分支，主要用来验证dts/patch的可行性和6.12及以上内核
 - rockchip64-current存放current（rockchip64-6.6）,edge（目前是rockchip64-6.12）的patch/dts文件通过软链接让一份文件实现复用
 - rockchip64-6.1存放stable（自定义内核分支，armbian没有这个分支，默认为current-6.6）
 - stable必须要在xxx.conf的KERNEL_TARGET选项添加stable
