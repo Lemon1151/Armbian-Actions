@@ -160,7 +160,8 @@ jobs:
           body: |  
             ### Armbian Kernel Packages  
             - The kernel can be used to compile Armbian
-            - linux-dtb,linux-headers,linux-image,linux-libc-dev .deb
+            - Usage method: After unzipping, install the deb packages in order
+            - Deb Packages: linux-dtb | linux-headers | linux-image | linux-libc-dev
           draft: false  
           prerelease: false    
 
