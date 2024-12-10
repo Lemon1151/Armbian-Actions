@@ -97,7 +97,7 @@ jobs:
           cp -rf ${{ github.workspace }}/addboard/userpatches/* userpatches
           ls -la
   
-      - name: Compile Armbian Kernel [ ${{ inputs.RELEASE }} ] 
+      - name: Compile Armbian Kernel [ ${{ inputs.BOARD }} ${{ inputs.RELEASE }} ] 
         run: |  
           cd /mnt/workdir/build/ 
           ./compile.sh BOARD=${{ inputs.BOARD }} RELEASE=${{ inputs.RELEASE }} BRANCH=${{ inputs.BRANCH }} BUILD_MINIMAL=no \
