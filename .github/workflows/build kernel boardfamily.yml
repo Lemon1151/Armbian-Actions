@@ -125,7 +125,7 @@ jobs:
         with:  
           tag: "Armbian_Kernel"
           name: "Armbian_Kernel"
-          artifacts: "${{ github.workspace }}/build/output/kernel-${KERNEL_VERSION}-${BOARDFAMILY}.tar.gz"  
+          artifacts: "${{ github.workspace }}/build/output/kernel-${{ env.KERNEL_VERSION }}-${{ env.BOARDFAMILY }}.tar.gz"  
           allowUpdates: true  
           removeArtifacts: false  
           replacesArtifacts: true  
