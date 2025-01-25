@@ -125,6 +125,9 @@ jobs:
               ls -l
               echo "Directory listing after renaming:"
               find . -maxdepth 1 -type f 
+
+              # 设置环境变量
+              echo "new_base_name=${new_base_name}" >> $GITHUB_ENV
             fi
           fi       
         
@@ -134,7 +137,7 @@ jobs:
         with:  
           tag: "Armbian_Kernel"
           name: "Armbian_Kernel"
-          artifacts: "${{ github.workspace }}/build/output/packages-hashed/kernel_${{ env.KERNEL_VERSION }}_${{ env.BOARD_MODEL }}.tar"  
+          artifacts: "${{ github.workspace }}/build/output/packages-hashed/${{ env.new_base_name }}"  
           allowUpdates: true  
           removeArtifacts: false  
           replacesArtifacts: true  
