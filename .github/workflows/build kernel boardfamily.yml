@@ -96,51 +96,37 @@ jobs:
           cd /mnt/workdir/build/ 
           ./compile.sh BOARD=${{ inputs.BOARD }} RELEASE=${{ inputs.RELEASE }} BRANCH=${{ inputs.BRANCH }} BUILD_MINIMAL=no \
                            BUILD_DESKTOP=no KERNEL_CONFIGURE=no COMPRESS_OUTPUTIMAGE=sha,xz BOOT_LOGO=${{ inputs.BOOT_LOGO }}   
-
-      - name: Prepare Release Metadata
-        run: |  
-          # 提取版本号
-          # latest_image=$(ls ${{ github.workspace }}/build/output/images/Armbian-unofficial_*.img.xz | grep -oE 'Armbian-unofficial_[0-9.]+_.*' | sort -V | tail -n 1)  
-          latest_image=$(ls ${{ github.workspace }}/build/output/images/Armbian-unofficial_*.img.xz | sort -V | tail -n 1) 
-          version=$(echo "$latest_image" | cut -d'_' -f2)  
-          
-          # 提取板子型号  
-          board_model=$(echo "$latest_image" | cut -d'_' -f3)  
-          
-          # 由于我们不想在awk中处理扩展名，我们可以先删除它  
-          filename_no_ext=$(echo "$latest_image" | sed 's/\.img\.xz$//')  
-  
-          # 然后使用awk提取版本号
-          kernel_version=$(echo "$filename_no_ext" | awk -F'_' '{print $(NF)}') 
-  
-          echo "Latest Image: $latest_image"  
-          echo "Version: $version"  
-          echo "Board Model: $board_model"  
-          echo "Kernel Version: $kernel_version"
-      
-          # 将版本号设置为环境变量  
-          echo "VERSION=$version" >> $GITHUB_ENV
-          echo "BOARD_MODEL=$board_model" >> $GITHUB_ENV 
-          echo "KERNEL_VERSION=$kernel_version" >> $GITHUB_ENV
          
-      - name: Prepare Kernel Packages  
+      - name: Prepare Kernel Release Metadata 
         run: |  
           cd "${GITHUB_WORKSPACE}/build/output/packages-hashed/"
-          file=$(find . -maxdepth 1 -type f -name 'kernel-*.tar' | head -n 1)  
-   
-          # 检查是否找到了文件  
-          if [ -n "$file" ]; then  
-            echo "Found file: $file"  
-            # 重命名文件  
-            mv "$file" "kernel_${{ env.KERNEL_VERSION }}_${{ env.BOARD_MODEL }}.tar"  
-            echo "Renamed file to: kernel_${{ env.KERNEL_VERSION }}_${{ env.BOARD_MODEL }}.tar"  
-            # 列出目录中的文件以验证重命名  
-            ls -l  
-            echo "Directory listing after renaming:"  
-            find . -maxdepth 1 -type f 
-          else  
-            echo "No matching file found."  
-          fi        
+          
+          # 查找并列出所有匹配的文件，按修改时间排序，取最新的一个
+          latest_file=$(find . -maxdepth 1 -type f -name 'kernel-*.tar' -print0 | xargs -0 ls -t | head -n 1)
+          
+          if [ -z "$latest_file" ]; then
+            echo "No matching file found."
+          else
+            # 获取文件名而不包括路径
+            base_name=$(basename "$latest_file")
+            
+            # 提取版本号及其之前的部分作为新文件名
+            new_base_name=$(echo "$base_name" | sed -n 's/$kernel[^_]*_[^_.]*$_.*\.tar/\1.tar/p')
+            
+            # 检查是否成功提取了新文件名
+            if [ -z "$new_base_name" ]; then
+              echo "Failed to extract the new filename from $base_name"
+            else
+              # 重命名文件
+              mv "$latest_file" "$new_base_name"
+              echo "Renamed file $base_name to: $new_base_name"
+              
+              # 列出目录中的文件以验证重命名
+              ls -l
+              echo "Directory listing after renaming:"
+              find . -maxdepth 1 -type f 
+            fi
+          fi       
         
       - name: Upload Kernel Packages to Release  
         if: success()  
