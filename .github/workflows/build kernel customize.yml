@@ -1,4 +1,4 @@
-name: Build Kernel RK35xx
+name: Build Kernel Customize
   
 on:  
   workflow_dispatch:  
