@@ -111,7 +111,7 @@ jobs:
             base_name=$(basename "$latest_file")
             
             # 提取版本号及其之前的部分作为新文件名
-           new_base_name=$(echo "$base_name" | sed -n 's/kernel-$[^_]*$[^.]*/\1.tar/p')
+            new_base_name=$(echo "$base_name" | sed -n 's/kernel-$[^_]*$[^.]*/\1.tar/p')
             
             # 检查是否成功提取了新文件名
             if [ -z "$new_base_name" ]; then
