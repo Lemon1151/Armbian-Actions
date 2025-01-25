@@ -1,4 +1,4 @@
-name: Build Kernel Customize
+name: Build Kernel BoardFamily
   
 on:  
   workflow_dispatch:  
