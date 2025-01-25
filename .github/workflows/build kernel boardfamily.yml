@@ -1,0 +1,162 @@
+name: Build Kernel Customize
+  
+on:  
+  workflow_dispatch:  
+    inputs:  
+      BOARD:  
+        description: 'Board type'  
+        required: true 
+        default: 'cyber-aib-rk3588'
+        type: choice
+        options:
+          - cyber-aib-rk3588
+      BRANCH:  
+        description: 'Armbian kernel branch'  
+        default: 'current'  
+        required: false 
+        type: choice 
+        options:
+          - legacy
+          - vendor
+          - current
+          - edge
+      RELEASE:  
+        description: 'Release name' 
+        default: 'bookworm'
+        required: true  
+        type: choice
+        options:
+          - jammy
+          - noble
+          - bullseye
+          - bookworm
+      Version:
+        description: 'Armbian Kernel Version'
+        default: 'v24.11'
+        required: false 
+        type: choice
+        options: 
+          - main
+          - v24.11
+          - v24.08
+      BOOT_LOGO:  
+        description: 'Include boot logo'  
+        default: 'yes'  
+        required: false  
+        type: choice 
+        options:
+          - yes
+          - no
+env:
+  TZ: America/New_York
+  
+jobs:  
+  build-armbian-kernel:  
+    runs-on: ubuntu-latest  
+    steps:  
+      - name: Checkout  
+        uses: actions/checkout@v3    
+
+      - name: Initialization environment
+        id: init
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          # 清理 Docker 镜像和软件缓存
+          docker_images_ids=$(docker images -q)
+          if [ -n "$docker_images_ids" ]; then
+            docker rmi $docker_images_ids
+          fi
+          docker image prune -a -f
+          sudo -E apt-get -y purge azure-cli ghc* zulu* llvm* firefox google* dotnet* openjdk* mysql* php* mongodb* dotnet* moby* snapd* android* || true
+          sudo -E apt-get -qq autoremove --purge
+          sudo -E apt-get -qq clean
+          # 设置时区并创建工作目录
+          sudo timedatectl set-timezone "${TZ}"
+          sudo mkdir -p /mnt/workdir
+          sudo chown $USER:$GROUPS /mnt/workdir
+          df -Th
+        
+      - name: Download source code
+        working-directory: /mnt/workdir
+        run: |
+          df -hT ${PWD}
+          git clone -q --single-branch --depth=1 --branch=${{ github.event.inputs.Version }} https://github.com/armbian/build.git build 
+          ln -sf /mnt/workdir/build $GITHUB_WORKSPACE/build
+
+          cd build/
+          # 复制 config 和 userpatches 目录文件    
+          cp -rf ${{ github.workspace }}/addboard/config/* config
+          mkdir -p userpatches
+          cp -rf ${{ github.workspace }}/addboard/userpatches/* userpatches
+          ls -la
+  
+      - name: Compile Armbian Kernel [ ${{ inputs.RELEASE }} ] 
+        run: |  
+          cd /mnt/workdir/build/ 
+          ./compile.sh BOARD=${{ inputs.BOARD }} RELEASE=${{ inputs.RELEASE }} BRANCH=${{ inputs.BRANCH }} BUILD_MINIMAL=no \
+                           BUILD_DESKTOP=no KERNEL_CONFIGURE=no COMPRESS_OUTPUTIMAGE=sha,xz BOOT_LOGO=${{ inputs.BOOT_LOGO }}   
+
+      - name: Prepare Release Metadata
+        run: |  
+          # 提取版本号
+          # latest_image=$(ls ${{ github.workspace }}/build/output/images/Armbian-unofficial_*.img.xz | grep -oE 'Armbian-unofficial_[0-9.]+_.*' | sort -V | tail -n 1)  
+          latest_image=$(ls ${{ github.workspace }}/build/output/images/Armbian-unofficial_*.img.xz | sort -V | tail -n 1) 
+          version=$(echo "$latest_image" | cut -d'_' -f2)  
+          
+          # 提取板子型号  
+          board_model=$(echo "$latest_image" | cut -d'_' -f3)  
+          
+          # 由于我们不想在awk中处理扩展名，我们可以先删除它  
+          filename_no_ext=$(echo "$latest_image" | sed 's/\.img\.xz$//')  
+  
+          # 然后使用awk提取版本号
+          kernel_version=$(echo "$filename_no_ext" | awk -F'_' '{print $(NF)}') 
+  
+          echo "Latest Image: $latest_image"  
+          echo "Version: $version"  
+          echo "Board Model: $board_model"  
+          echo "Kernel Version: $kernel_version"
+      
+          # 将版本号设置为环境变量  
+          echo "VERSION=$version" >> $GITHUB_ENV
+          echo "BOARD_MODEL=$board_model" >> $GITHUB_ENV 
+          echo "KERNEL_VERSION=$kernel_version" >> $GITHUB_ENV
+         
+      - name: Prepare Kernel Packages  
+        run: |  
+          cd "${GITHUB_WORKSPACE}/build/output/packages-hashed/"
+          file=$(find . -maxdepth 1 -type f -name 'kernel-*.tar' | head -n 1)  
+   
+          # 检查是否找到了文件  
+          if [ -n "$file" ]; then  
+            echo "Found file: $file"  
+            # 重命名文件  
+            mv "$file" "kernel_${{ env.KERNEL_VERSION }}_${{ env.BOARD_MODEL }}.tar"  
+            echo "Renamed file to: kernel_${{ env.KERNEL_VERSION }}_${{ env.BOARD_MODEL }}.tar"  
+            # 列出目录中的文件以验证重命名  
+            ls -l  
+            echo "Directory listing after renaming:"  
+            find . -maxdepth 1 -type f 
+          else  
+            echo "No matching file found."  
+          fi        
+        
+      - name: Upload Kernel Packages to Release  
+        if: success()  
+        uses: ncipollo/release-action@main  
+        with:  
+          tag: "Armbian_Kernel"
+          name: "Armbian_Kernel"
+          artifacts: "${{ github.workspace }}/build/output/packages-hashed/kernel_${{ env.KERNEL_VERSION }}_${{ env.BOARD_MODEL }}.tar"  
+          allowUpdates: true  
+          removeArtifacts: false  
+          replacesArtifacts: true  
+          token: ${{ secrets.GITHUB_TOKEN }}  
+          body: |  
+            ### Armbian Kernel Packages  
+            - The kernel can be used to compile Armbian
+            - Usage method: After unzipping, install the deb packages in order
+            - Deb Packages: linux-dtb | linux-headers | linux-image | linux-libc-dev
+          draft: false  
+          prerelease: false    
