@@ -110,11 +110,11 @@ jobs:
             # 获取文件名而不包括路径
             base_name=$(basename "$latest_file")
             
-            # 提取版本号及其之前的部分作为新文件名
-            new_base_name=$(echo "$base_name" | sed -n 's/kernel-$[^_]*$[^.]*/\1.tar/p')
+            # 删除版本号后的所有内容（不包含.tar）以获取新文件名
+            new_base_name=$(echo "$base_name" | sed -E 's/(kernel-[^_]*_[0-9.]*).*/\1.tar/')
             
             # 检查是否成功提取了新文件名
-            if [ -z "$new_base_name" ]; then
+            if [ -z "$new_base_name" ] || [ "$new_base_name" = "$base_name" ]; then
               echo "Failed to extract the new filename from $base_name"
             else
               # 重命名文件
