@@ -18,10 +18,8 @@
 - build armbian all borad.yml：构建列表内所有设备armbian固件，不上传kernel headers文件
 - build armbian customize board.yml：单独构建某设备armbian固件，不上传kernel headers文件
 - build armbian kernel customize.yml：单独构建某设备armbian固件，将headers、image、dtb、libc-dev上传至[Armbian Kernel](https://github.com/Lemon1151/Armbian-Actions/releases/tag/Armbian_Kernel)标签
-- build kernel boardfamily.yml：只构建内核，将headers、image、dtb、libc-dev上传至[Armbian Kernel](https://github.com/Lemon1151/Armbian-Actions/releases/tag/Armbian_Kernel)标签,文件名示例：kernel-6.x.y-current-rockchip64.tar.gz
-
-- build kernel customize.yml：单独构建armbian固件，只上传headers、image、dtb、libc-dev至[Armbian Kernel](https://github.com/Lemon1151/Armbian-Actions/releases/tag/Armbian_Kernel)标签,文件名示例：kernel-6.x.y-current-板子名称.tar.gz
-
+- build kernel boardfamily.yml：只构建内核，将headers、image、dtb、libc-dev上传至[Armbian Kernel](https://github.com/Lemon1151/Armbian-Actions/releases/tag/Armbian_Kernel)标签，文件名示例：kernel-6.x.y-current-rockchip64.tar.gz
+- build kernel customize.yml：单独构建armbian固件，只上传headers、image、dtb、libc-dev至[Armbian Kernel](https://github.com/Lemon1151/Armbian-Actions/releases/tag/Armbian_Kernel)标签，文件名示例：kernel-6.x.y-current-板子名称.tar.gz
 
 ## Links  
 - [armbian](https://github.com/armbian/build)
