@@ -44,6 +44,7 @@ on:
         type: choice
         options: 
           - main
+          - v25.02
           - v24.11
           - v24.08
       BOOT_LOGO:  
