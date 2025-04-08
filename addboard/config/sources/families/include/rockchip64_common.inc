@@ -43,14 +43,14 @@ case $BRANCH in
 	current)
 		declare -g KERNEL_MAJOR_MINOR="6.6"
 		declare -g LINUXFAMILY=rockchip64
-		KERNELBRANCH='branch:linux-6.6.y
+		KERNELBRANCH='branch:linux-6.6.y'
 		declare -g LINUXCONFIG='linux-rockchip64-'$BRANCH
 		;;
 
 	edge)
 		declare -g KERNEL_MAJOR_MINOR="6.12"
 		declare -g LINUXFAMILY=rockchip64
-		KERNELBRANCH='branch:linux-6.12.y
+		KERNELBRANCH='branch:linux-6.12.y'
 		declare -g LINUXCONFIG='linux-rockchip64-'$BRANCH
 		;;
 esac
