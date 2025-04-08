@@ -37,7 +37,7 @@ case $BRANCH in
 		declare -g LINUXFAMILY=rockchip64
 		declare -g LINUXCONFIG='linux-rockchip64-'$BRANCH
 		KERNELSOURCE='https://github.com/armbian/linux-rockchip.git'
-		KERNELBRANCH='branch:rk-6.1-rkr3'
+		KERNELBRANCH='branch:rk-6.1-rkr5'
 		KERNELPATCHDIR='rk35xx-vendor-6.1'
 		;;
 	current)
