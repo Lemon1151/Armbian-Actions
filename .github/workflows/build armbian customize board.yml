@@ -68,6 +68,14 @@ on:
         options:
           - yes
           - no
+      USE_DOCKER:
+        description: 'Use Docker for building'
+        default: 'no'
+        required: false
+        type: choice
+        options:
+          - yes
+          - no
 env:
   TZ: America/New_York
   
@@ -77,19 +85,21 @@ jobs:
     steps:  
       - name: Checkout  
         uses: actions/checkout@v3  
-      
+
+      # 拉取 Armbian Docker 镜像步骤
+      - name: Pull Armbian Docker image (if USE_DOCKER=yes)
+        if: inputs.USE_DOCKER == 'yes'
+        run: |
+          docker pull armbian/build:latest
+
       - name: Initialization environment
         id: init
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
           # 清理 Docker 镜像和软件缓存
-          docker_images_ids=$(docker images -q)
-          if [ -n "$docker_images_ids" ]; then
-            docker rmi $docker_images_ids
-          fi
-          docker image prune -a -f
-          sudo -E apt-get -y purge azure-cli ghc* zulu* llvm* firefox google* dotnet* openjdk* mysql* php* mongodb* dotnet* moby* snapd* android* || true
+          docker system prune -a -f || true
+          sudo -E apt-get -y purge azure-cli ghc* zulu* llvm* firefox google* dotnet* openjdk* mysql* php* mongodb* moby* snapd* android* || true
           sudo -E apt-get -qq autoremove --purge
           sudo -E apt-get -qq clean
           
@@ -115,9 +125,22 @@ jobs:
   
       - name: Compile Armbian [ ${{ inputs.BOARD }} ${{ inputs.RELEASE }} ] 
         run: |  
-          cd /mnt/workdir/build/ 
-          ./compile.sh BOARD=${{ inputs.BOARD }} RELEASE=${{ inputs.RELEASE }} BRANCH=${{ inputs.BRANCH }} BUILD_MINIMAL=no BUILD_DESKTOP=${{ inputs.BUILD_DESKTOP }} \
-                           KERNEL_CONFIGURE=no COMPRESS_OUTPUTIMAGE=${{ inputs.COMPRESS_OUTPUTIMAGE }} BOOT_LOGO=${{ inputs.BOOT_LOGO }} 
+          if [ "${{ inputs.USE_DOCKER }}" = "yes" ]; then
+            echo "Using Docker for compilation..."
+            docker run --rm -it \
+              -v /mnt/workdir/build:/work \
+              -w /work \
+              armbian/build:latest \
+              bash -c "./compile.sh BOARD=${{ inputs.BOARD }} RELEASE=${{ inputs.RELEASE }} BRANCH=${{ inputs.BRANCH }} \
+                BUILD_MINIMAL=no BUILD_DESKTOP=${{ inputs.BUILD_DESKTOP }} KERNEL_CONFIGURE=no \
+                COMPRESS_OUTPUTIMAGE=${{ inputs.COMPRESS_OUTPUTIMAGE }} BOOT_LOGO=${{ inputs.BOOT_LOGO }}"
+          else
+            echo "Compiling directly on the host..."
+            cd /mnt/workdir/build/
+            ./compile.sh BOARD=${{ inputs.BOARD }} RELEASE=${{ inputs.RELEASE }} BRANCH=${{ inputs.BRANCH }} \
+              BUILD_MINIMAL=no BUILD_DESKTOP=${{ inputs.BUILD_DESKTOP }} KERNEL_CONFIGURE=no \
+              COMPRESS_OUTPUTIMAGE=${{ inputs.COMPRESS_OUTPUTIMAGE }} BOOT_LOGO=${{ inputs.BOOT_LOGO }}
+          fi
           
       - name: Set current year and month  
         run: |  
