@@ -125,7 +125,7 @@ jobs:
   
       - name: Compile Armbian [ ${{ inputs.BOARD }} ${{ inputs.RELEASE }} ] 
         run: |  
-          if [ "${{ inputs.USE_DOCKER }}" = "yes" ]; then
+          if [ "${{ inputs.USE_DOCKER }}" = "true" ]; then
             echo "Using Docker for compilation..."
             docker run --rm -it \
               -v /mnt/workdir/build:/work \
