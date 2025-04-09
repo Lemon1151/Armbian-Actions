@@ -70,7 +70,7 @@ on:
           - no
       USE_DOCKER:
         description: 'Use Docker for building'
-        default: 'no'
+        default: 'yes'
         required: false
         type: choice
         options:
