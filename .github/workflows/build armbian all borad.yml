@@ -91,6 +91,18 @@ jobs:
           sudo -E apt-get -y purge azure-cli ghc* zulu* llvm* firefox google* dotnet* openjdk* mysql* php* mongodb* dotnet* moby* snapd* android* || true
           sudo -E apt-get -qq autoremove --purge
           sudo -E apt-get -qq clean
+          
+          # 安装兼容的 Python 版本（如 Python 3.10）
+          sudo -E apt-get install -y python3.10 python3.10-distutils
+
+          # 设置默认 Python 版本为 3.10
+          sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 1
+          sudo update-alternatives --config python3
+
+          # 确保 pip 工作正常
+          python3 -m ensurepip
+          python3 -m pip install --upgrade pip setuptools
+          
           # 设置时区并创建工作目录
           sudo timedatectl set-timezone "${TZ}"
           sudo mkdir -p /mnt/workdir
