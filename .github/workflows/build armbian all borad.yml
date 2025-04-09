@@ -124,27 +124,52 @@ jobs:
           ls -la
   
       - name: Compile Armbian [ ${{ inputs.BOARD }} ${{ inputs.RELEASE }} ] 
-        run: |  
+        run: |
+          # 进入编译目录
           cd build/
-          
-          # 当 BOARD 为 all 时，遍历所有板类型  
-          if [ "${{ inputs.BOARD }}" = "all" ]; then  
-            declare -a BOARDS=("fine3399" "fmx1-pro" "r08" "rock960" "sg2710" "tpm312" "tb-ls3399" "xiaobao-nas" "zysj")  
-            for BOARD in "${BOARDS[@]}"; do  
-              echo "Compiling for board: $BOARD"  
-              ./compile.sh BOARD=$BOARD RELEASE=${{ inputs.RELEASE }} BRANCH=${{ inputs.BRANCH }} BUILD_MINIMAL=no BUILD_DESKTOP=${{ inputs.BUILD_DESKTOP }} \
-                KERNEL_CONFIGURE=no COMPRESS_OUTPUTIMAGE=${{ inputs.COMPRESS_OUTPUTIMAGE }} BOOT_LOGO=${{ inputs.BOOT_LOGO }}  
-              if [ $? -ne 0 ]; then  
-                echo "Compilation failed for board: $BOARD" >&2  # 将错误消息输出到标准错误流    
-              fi   
-            done  
-          else  
-            # 否则，仅对指定的 BOARD 进行编译  
-            ./compile.sh BOARD=$INPUT_BOARD RELEASE=${{ inputs.RELEASE }} BRANCH=${{ inputs.BRANCH }} BUILD_MINIMAL=no BUILD_DESKTOP=${{ inputs.BUILD_DESKTOP }} \
-              KERNEL_CONFIGURE=no COMPRESS_OUTPUTIMAGE=${{ inputs.COMPRESS_OUTPUTIMAGE }} BOOT_LOGO=${{ inputs.BOOT_LOGO }}  
-            if [ $? -ne 0 ]; then  
-              echo "Compilation failed for specified board: $INPUT_BOARD" >&2  
-              exit 1  # 如果是指定单个板子且失败，则退出脚本  
+
+          # 定义编译函数
+          compile_board() {
+            local BOARD=$1
+            echo "Compiling for board: $BOARD"
+            ./compile.sh BOARD=$BOARD RELEASE=${{ inputs.RELEASE }} BRANCH=${{ inputs.BRANCH }} \
+              BUILD_MINIMAL=no BUILD_DESKTOP=${{ inputs.BUILD_DESKTOP }} KERNEL_CONFIGURE=no \
+              COMPRESS_OUTPUTIMAGE=${{ inputs.COMPRESS_OUTPUTIMAGE }} BOOT_LOGO=${{ inputs.BOOT_LOGO }}
+            if [ $? -ne 0 ]; then
+              echo "Compilation failed for board: $BOARD" >&2
+              return 1
+            fi
+            return 0
+          }
+
+          # 定义支持的板子列表
+          declare -a SUPPORTED_BOARDS=("fine3399" "fmx1-pro" "r08" "rock960" "sg2710" "tpm312" "tb-ls3399" "xiaobao-nas" "zysj")
+
+          # 判断是否为 "all" 编译模式
+          if [ "${{ inputs.BOARD }}" = "all" ]; then
+            FAILED_BOARDS=()
+            for BOARD in "${SUPPORTED_BOARDS[@]}"; do
+              if ! compile_board "$BOARD"; then
+                FAILED_BOARDS+=("$BOARD")
+              fi
+            done
+
+            # 输出失败的板子列表
+            if [ ${#FAILED_BOARDS[@]} -gt 0 ]; then
+              echo "The following boards failed to compile: ${FAILED_BOARDS[*]}" >&2
+              exit 1  # 仅在整个编译完成后退出，而不是在单个板子失败时退出
+            fi
+          else
+            # 单板编译模式
+            if [[ " ${SUPPORTED_BOARDS[@]} " =~ " ${{ inputs.BOARD }} " ]]; then
+              compile_board "${{ inputs.BOARD }}"
+              if [ $? -ne 0 ]; then
+                echo "Compilation failed for specified board: ${{ inputs.BOARD }}" >&2
+                exit 1
+              fi
+            else
+              echo "Unsupported board: ${{ inputs.BOARD }}" >&2
+              exit 1
             fi
           fi   
           
