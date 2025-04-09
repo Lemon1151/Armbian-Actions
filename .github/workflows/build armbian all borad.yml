@@ -180,13 +180,6 @@ jobs:
             fi
           }
 
-          # 判断编译模式
-          if [ "${{ inputs.BOARD }}" = "all" ]; then
-            compile_all_boards
-          else
-            compile_single_board
-          fi
-
           # 判断是否使用 Docker
           if [ "${{ inputs.USE_DOCKER }}" = "yes" ]; then
             echo "Using Docker for compilation..."
@@ -197,6 +190,14 @@ jobs:
               bash -c "./compile.sh BOARD=${{ inputs.BOARD }} RELEASE=${{ inputs.RELEASE }} BRANCH=${{ inputs.BRANCH }} \
                 BUILD_MINIMAL=no BUILD_DESKTOP=${{ inputs.BUILD_DESKTOP }} KERNEL_CONFIGURE=no \
                 COMPRESS_OUTPUTIMAGE=${{ inputs.COMPRESS_OUTPUTIMAGE }} BOOT_LOGO=${{ inputs.BOOT_LOGO }}"
+          else
+              echo "Compiling directly on the host..."
+              if [ "${{ inputs.BOARD }}" = "all" ]; then
+                compile_all_boards
+              else
+                compile_single_board
+              fi
+            fi
           
       - name: Set current year and month  
         run: |  
