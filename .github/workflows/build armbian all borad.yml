@@ -67,14 +67,6 @@ on:
         options:
           - yes
           - no
-      USE_DOCKER:
-        description: 'Use Docker for building'
-        default: 'no'
-        required: false
-        type: choice
-        options:
-          - yes
-          - no
 env:
   TZ: America/New_York
   
@@ -83,13 +75,7 @@ jobs:
     runs-on: ubuntu-22.04  
     steps:  
       - name: Checkout  
-        uses: actions/checkout@v3   
-
-      # 拉取 Armbian Docker 镜像步骤
-      - name: Pull Armbian Docker image (if USE_DOCKER=yes)
-        if: inputs.USE_DOCKER == 'yes'
-        run: |
-          docker pull armbian/build:latest
+        uses: actions/checkout@v3    
 
       - name: Initialization environment
         id: init
@@ -97,8 +83,12 @@ jobs:
           DEBIAN_FRONTEND: noninteractive
         run: |
           # 清理 Docker 镜像和软件缓存
-          docker system prune -a -f || true
-          sudo -E apt-get -y purge azure-cli ghc* zulu* llvm* firefox google* dotnet* openjdk* mysql* php* mongodb* moby* snapd* android* || true
+          docker_images_ids=$(docker images -q)
+          if [ -n "$docker_images_ids" ]; then
+            docker rmi $docker_images_ids
+          fi
+          docker image prune -a -f
+          sudo -E apt-get -y purge azure-cli ghc* zulu* llvm* firefox google* dotnet* openjdk* mysql* php* mongodb* dotnet* moby* snapd* android* || true
           sudo -E apt-get -qq autoremove --purge
           sudo -E apt-get -qq clean
           
@@ -176,24 +166,12 @@ jobs:
             fi
           }
 
-          # 判断是否使用 Docker
-          if [ "${{ inputs.USE_DOCKER }}" = "yes" ]; then
-            echo "Using Docker for compilation..."
-            docker run --rm -it \
-              -v $(pwd):/work \
-              -w /work \
-              armbian/build:latest \
-              bash -c "./compile.sh BOARD=${{ inputs.BOARD }} RELEASE=${{ inputs.RELEASE }} BRANCH=${{ inputs.BRANCH }} \
-                BUILD_MINIMAL=no BUILD_DESKTOP=${{ inputs.BUILD_DESKTOP }} KERNEL_CONFIGURE=no \
-                COMPRESS_OUTPUTIMAGE=${{ inputs.COMPRESS_OUTPUTIMAGE }} BOOT_LOGO=${{ inputs.BOOT_LOGO }}"
+          # 判断编译模式
+          if [ "${{ inputs.BOARD }}" = "all" ]; then
+            compile_all_boards
           else
-            echo "Compiling directly on the host..."
-            if [ "${{ inputs.BOARD }}" = "all" ]; then
-              compile_all_boards
-            else
-              compile_single_board
-            fi
-          fi
+            compile_single_board
+          fi   
           
       - name: Set current year and month  
         run: |  
@@ -219,7 +197,7 @@ jobs:
           allowUpdates: true 
           removeArtifacts: false 
           replacesArtifacts: true 
-          token: ${{ secrets.MY_TOKEN }}  
+          token: ${{ secrets.GITHUB_TOKEN }}  
           body: |  
             ### Armbian Image Information  
             - Release: ${{ github.event.inputs.RELEASE }}    
