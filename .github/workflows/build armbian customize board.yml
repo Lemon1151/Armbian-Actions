@@ -99,7 +99,7 @@ jobs:
               qemu-user-static debootstrap rsync dosfstools mtools parted curl wget pigz \
               xz-utils zstd f2fs-tools zerofree device-tree-compiler swig python3-dev python3-pip \
               python3-setuptools python3-wheel locales ccache automake pkg-config cmake libtool \
-              scons zip unzip p7zip-full gawk
+              scons zip unzip p7zip-full gawk python3-distutils
 
           pip3 install --upgrade pip
           pip3 install pyyaml jinja2 requests distro
