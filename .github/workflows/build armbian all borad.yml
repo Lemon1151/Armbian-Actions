@@ -39,7 +39,7 @@ on:
           - bullseye
       Version:
         description: 'Armbian Version'
-        default: 'v24.11'
+        default: 'main'
         required: false 
         type: choice
         options: 
