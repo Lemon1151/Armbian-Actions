@@ -120,13 +120,17 @@ jobs:
           # 进入编译目录
           cd build/
 
-          # 定义编译函数
+          # 定义支持的板子列表
+          declare -a SUPPORTED_BOARDS=("fine3399" "fmx1-pro" "r08" "rock960" "sg2710" "tpm312" "tb-ls3399" "xiaobao-nas" "zysj")
+
+          # 编译函数
           compile_board() {
             local BOARD=$1
             echo "Compiling for board: $BOARD"
             ./compile.sh BOARD=$BOARD RELEASE=${{ inputs.RELEASE }} BRANCH=${{ inputs.BRANCH }} \
               BUILD_MINIMAL=no BUILD_DESKTOP=${{ inputs.BUILD_DESKTOP }} KERNEL_CONFIGURE=no \
-              COMPRESS_OUTPUTIMAGE=${{ inputs.COMPRESS_OUTPUTIMAGE }} BOOT_LOGO=${{ inputs.BOOT_LOGO }}
+              COMPRESS_OUTPUTIMAGE=${{ inputs.COMPRESS_OUTPUTIMAGE }} BOOT_LOGO=${{ inputs.BOOT_LOGO }} \
+              > "log-${BOARD}.txt" 2>&1
             if [ $? -ne 0 ]; then
               echo "Compilation failed for board: $BOARD" >&2
               return 1
@@ -134,11 +138,8 @@ jobs:
             return 0
           }
 
-          # 定义支持的板子列表
-          declare -a SUPPORTED_BOARDS=("fine3399" "fmx1-pro" "r08" "rock960" "sg2710" "tpm312" "tb-ls3399" "xiaobao-nas" "zysj")
-
-          # 判断是否为 "all" 编译模式
-          if [ "${{ inputs.BOARD }}" = "all" ]; then
+          # 多板编译模式
+          compile_all_boards() {
             FAILED_BOARDS=()
             for BOARD in "${SUPPORTED_BOARDS[@]}"; do
               if ! compile_board "$BOARD"; then
@@ -149,20 +150,30 @@ jobs:
             # 输出失败的板子列表
             if [ ${#FAILED_BOARDS[@]} -gt 0 ]; then
               echo "The following boards failed to compile: ${FAILED_BOARDS[*]}" >&2
-              exit 1  # 仅在整个编译完成后退出，而不是在单个板子失败时退出
+            else
+              echo "All boards compiled successfully."
             fi
-          else
-            # 单板编译模式
-            if [[ " ${SUPPORTED_BOARDS[@]} " =~ " ${{ inputs.BOARD }} " ]]; then
-              compile_board "${{ inputs.BOARD }}"
-              if [ $? -ne 0 ]; then
-                echo "Compilation failed for specified board: ${{ inputs.BOARD }}" >&2
+          }
+
+          # 单板编译模式
+          compile_single_board() {
+            local BOARD=${{ inputs.BOARD }}
+            if [[ " ${SUPPORTED_BOARDS[@]} " =~ " $BOARD " ]]; then
+              if ! compile_board "$BOARD"; then
+                echo "Compilation failed for specified board: $BOARD" >&2
                 exit 1
               fi
             else
-              echo "Unsupported board: ${{ inputs.BOARD }}" >&2
+              echo "Unsupported board: $BOARD" >&2
               exit 1
             fi
+          }
+
+          # 判断编译模式
+          if [ "${{ inputs.BOARD }}" = "all" ]; then
+            compile_all_boards
+          else
+            compile_single_board
           fi   
           
       - name: Set current year and month  
