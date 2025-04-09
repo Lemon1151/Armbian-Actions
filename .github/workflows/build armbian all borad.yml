@@ -67,15 +67,29 @@ on:
         options:
           - yes
           - no
+      USE_DOCKER:
+        description: 'Use Docker for building'
+        default: 'no'
+        required: false
+        type: choice
+        options:
+          - yes
+          - no
 env:
   TZ: America/New_York
   
 jobs:  
   build-armbian:  
-    runs-on: ubuntu-latest  
+    runs-on: ubuntu-22.04  
     steps:  
       - name: Checkout  
-        uses: actions/checkout@v3    
+        uses: actions/checkout@v3   
+
+      # 拉取 Armbian Docker 镜像步骤
+      - name: Pull Armbian Docker image (if USE_DOCKER=yes)
+        if: inputs.USE_DOCKER == 'yes'
+        run: |
+          docker pull armbian/build:latest
 
       - name: Initialization environment
         id: init
@@ -172,6 +186,17 @@ jobs:
           else
             compile_single_board
           fi
+
+          # 判断是否使用 Docker
+          if [ "${{ inputs.USE_DOCKER }}" = "yes" ]; then
+            echo "Using Docker for compilation..."
+            docker run --rm -it \
+              -v $(pwd):/work \
+              -w /work \
+              armbian/build:latest \
+              bash -c "./compile.sh BOARD=${{ inputs.BOARD }} RELEASE=${{ inputs.RELEASE }} BRANCH=${{ inputs.BRANCH }} \
+                BUILD_MINIMAL=no BUILD_DESKTOP=${{ inputs.BUILD_DESKTOP }} KERNEL_CONFIGURE=no \
+                COMPRESS_OUTPUTIMAGE=${{ inputs.COMPRESS_OUTPUTIMAGE }} BOOT_LOGO=${{ inputs.BOOT_LOGO }}"
           
       - name: Set current year and month  
         run: |  
