@@ -97,7 +97,7 @@ jobs:
           sudo apt install -y git build-essential gcc g++ bc bison flex libssl-dev \
               libncurses5-dev libelf-dev liblz4-tool lzop u-boot-tools kmod binfmt-support \
               qemu-user-static debootstrap rsync dosfstools mtools parted curl wget pigz \
-              pxz zstd f2fs-tools zerofree device-tree-compiler swig python3-dev python3-pip \
+              xz-utils zstd f2fs-tools zerofree device-tree-compiler swig python3-dev python3-pip \
               python3-setuptools python3-wheel locales ccache automake pkg-config cmake libtool \
               scons zip unzip p7zip-full gawk
 
