@@ -121,7 +121,7 @@ jobs:
           cd build/
 
           # 定义支持的板子列表
-          declare -a SUPPORTED_BOARDS=("fine3399" "fmx1-pro" "r08" "rock960" "sg2710" "tpm312" "tb-ls3399" "xiaobao-nas" "zysj")
+          declare -a SUPPORTED_BOARDS=("fine3399" "fmx1-pro" "r08" "rock960" "sg2710" "tpm312" "xiaobao-nas" "zysj")
 
           # 编译函数
           compile_board() {
