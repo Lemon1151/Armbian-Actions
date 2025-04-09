@@ -93,7 +93,7 @@ jobs:
           sudo -E apt-get -qq clean
 
           # 安装兼容的 Python 版本（如 Python 3.10）
-          sudo -E apt-get install -y python3.10 python3.10-distutils
+          sudo -E apt-get install -y python3-distutils python3-pip python3-setuptools
           
           # 设置时区并创建工作目录
           sudo timedatectl set-timezone "${TZ}"
