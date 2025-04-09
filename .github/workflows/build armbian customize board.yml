@@ -91,6 +91,10 @@ jobs:
           sudo -E apt-get -y purge azure-cli ghc* zulu* llvm* firefox google* dotnet* openjdk* mysql* php* mongodb* dotnet* moby* snapd* android* || true
           sudo -E apt-get -qq autoremove --purge
           sudo -E apt-get -qq clean
+          
+          # 安装兼容的 Python 依赖
+          sudo -E apt-get install -y python3-distutils python3-pip python3-setuptools
+          
           # 设置时区并创建工作目录
           sudo timedatectl set-timezone "${TZ}"
           sudo mkdir -p /mnt/workdir
