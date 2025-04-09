@@ -97,12 +97,8 @@ jobs:
           DEBIAN_FRONTEND: noninteractive
         run: |
           # 清理 Docker 镜像和软件缓存
-          docker_images_ids=$(docker images -q)
-          if [ -n "$docker_images_ids" ]; then
-            docker rmi $docker_images_ids
-          fi
-          docker image prune -a -f
-          sudo -E apt-get -y purge azure-cli ghc* zulu* llvm* firefox google* dotnet* openjdk* mysql* php* mongodb* dotnet* moby* snapd* android* || true
+          docker system prune -a -f || true
+          sudo -E apt-get -y purge azure-cli ghc* zulu* llvm* firefox google* dotnet* openjdk* mysql* php* mongodb* moby* snapd* android* || true
           sudo -E apt-get -qq autoremove --purge
           sudo -E apt-get -qq clean
           
@@ -191,13 +187,13 @@ jobs:
                 BUILD_MINIMAL=no BUILD_DESKTOP=${{ inputs.BUILD_DESKTOP }} KERNEL_CONFIGURE=no \
                 COMPRESS_OUTPUTIMAGE=${{ inputs.COMPRESS_OUTPUTIMAGE }} BOOT_LOGO=${{ inputs.BOOT_LOGO }}"
           else
-              echo "Compiling directly on the host..."
-              if [ "${{ inputs.BOARD }}" = "all" ]; then
-                compile_all_boards
-              else
-                compile_single_board
-              fi
+            echo "Compiling directly on the host..."
+            if [ "${{ inputs.BOARD }}" = "all" ]; then
+              compile_all_boards
+            else
+              compile_single_board
             fi
+          fi
           
       - name: Set current year and month  
         run: |  
