@@ -9,7 +9,6 @@ on:
         default: 'tpm312'
         type: choice
         options:
-          - emb3531
           - fine3399
           - fmx1-pro
           - r08
@@ -68,14 +67,6 @@ on:
         options:
           - yes
           - no
-      USE_DOCKER:
-        description: 'Use Docker for building'
-        default: 'yes'
-        required: false
-        type: choice
-        options:
-          - yes
-          - no
 env:
   TZ: America/New_York
   
@@ -85,23 +76,24 @@ jobs:
     steps:  
       - name: Checkout  
         uses: actions/checkout@v3  
-
-      # 拉取 Armbian Docker 镜像步骤
-      - name: Pull Armbian Docker image (if USE_DOCKER=yes)
-        if: inputs.USE_DOCKER == 'yes'
-        run: |
-          docker pull armbian/build:latest
-
+      
       - name: Initialization environment
         id: init
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
           # 清理 Docker 镜像和软件缓存
-          docker system prune -a -f || true
-          sudo -E apt-get -y purge azure-cli ghc* zulu* llvm* firefox google* dotnet* openjdk* mysql* php* mongodb* moby* snapd* android* || true
+          docker_images_ids=$(docker images -q)
+          if [ -n "$docker_images_ids" ]; then
+            docker rmi $docker_images_ids
+          fi
+          docker image prune -a -f
+          sudo -E apt-get -y purge azure-cli ghc* zulu* llvm* firefox google* dotnet* openjdk* mysql* php* mongodb* dotnet* moby* snapd* android* || true
           sudo -E apt-get -qq autoremove --purge
           sudo -E apt-get -qq clean
+          
+          # 安装兼容的 Python 依赖
+          sudo -E apt-get install -y python3-distutils python3-pip python3-setuptools
           
           # 设置时区并创建工作目录
           sudo timedatectl set-timezone "${TZ}"
@@ -125,22 +117,9 @@ jobs:
   
       - name: Compile Armbian [ ${{ inputs.BOARD }} ${{ inputs.RELEASE }} ] 
         run: |  
-          if [ "${{ inputs.USE_DOCKER }}" = "true" ]; then
-            echo "Using Docker for compilation..."
-            docker run --rm -it \
-              -v /mnt/workdir/build:/work \
-              -w /work \
-              armbian/build:latest \
-              bash -c "./compile.sh BOARD=${{ inputs.BOARD }} RELEASE=${{ inputs.RELEASE }} BRANCH=${{ inputs.BRANCH }} \
-                BUILD_MINIMAL=no BUILD_DESKTOP=${{ inputs.BUILD_DESKTOP }} KERNEL_CONFIGURE=no \
-                COMPRESS_OUTPUTIMAGE=${{ inputs.COMPRESS_OUTPUTIMAGE }} BOOT_LOGO=${{ inputs.BOOT_LOGO }}"
-          else
-            echo "Compiling directly on the host..."
-            cd /mnt/workdir/build/
-            ./compile.sh BOARD=${{ inputs.BOARD }} RELEASE=${{ inputs.RELEASE }} BRANCH=${{ inputs.BRANCH }} \
-              BUILD_MINIMAL=no BUILD_DESKTOP=${{ inputs.BUILD_DESKTOP }} KERNEL_CONFIGURE=no \
-              COMPRESS_OUTPUTIMAGE=${{ inputs.COMPRESS_OUTPUTIMAGE }} BOOT_LOGO=${{ inputs.BOOT_LOGO }}
-          fi
+          cd /mnt/workdir/build/ 
+          ./compile.sh BOARD=${{ inputs.BOARD }} RELEASE=${{ inputs.RELEASE }} BRANCH=${{ inputs.BRANCH }} BUILD_MINIMAL=no BUILD_DESKTOP=${{ inputs.BUILD_DESKTOP }} \
+                           KERNEL_CONFIGURE=no COMPRESS_OUTPUTIMAGE=${{ inputs.COMPRESS_OUTPUTIMAGE }} BOOT_LOGO=${{ inputs.BOOT_LOGO }} 
           
       - name: Set current year and month  
         run: |  
