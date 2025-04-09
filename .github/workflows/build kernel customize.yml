@@ -39,7 +39,7 @@ on:
           - bookworm
       Version:
         description: 'Armbian Kernel Version'
-        default: 'v24.11'
+        default: 'main'
         required: false 
         type: choice
         options: 
